@@ -1,13 +1,11 @@
-#!/usr/bin/env python
-
 import click
-from panoptesclient import Panoptes
+from panoptes_client.panoptes import Panoptes
 
 @click.group()
-def panoptes():
+def cli():
     pass
 
-@panoptes.command()
+@cli.command()
 @click.option('--id', help='Project ID', required=False, type=int)
 @click.option('--display-name')
 @click.argument('slug', required=False)
@@ -20,6 +18,3 @@ def project(id, display_name, slug):
         click.echo('\tClassification count: %s' % proj_data['classifications_count'])
         click.echo('\tSubject count: %s' % proj_data['subjects_count'])
         click.echo('')
-
-if __name__ == '__main__':
-    panoptes()
