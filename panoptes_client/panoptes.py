@@ -40,7 +40,7 @@ class Panoptes:
         r = requests.get(self.endpoint + path, params=params,  headers=headers)
         return r.json()
 
-    def get_project(self, project_id, slug=None, display_name=None):
+    def get_projects(self, project_id, slug=None, display_name=None):
         if project_id is None:
             project_id = ''
 
@@ -50,3 +50,9 @@ class Panoptes:
         }
 
         return self.get('/projects/%s' % project_id, params=params)
+
+    def get_project(self, project_id, slug=None, display_name=None):
+        return self.get_projects(project_id, slug, display_name)['projects'][0]
+
+    def get_subject(self, subject_id):
+        return self.get('/subjects/%s' % subject_id)
