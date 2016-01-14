@@ -21,7 +21,7 @@ def project(id, display_name, slug):
         click.echo('')
 
 @cli.command()
-@click.argument('subject_id', required=True)
+@click.argument('subject_id', required=True, type=int)
 def subject(subject_id):
     subject = panoptes.get_subject(subject_id)['subjects'][0]
     project = panoptes.get_project(subject['links']['project'])
