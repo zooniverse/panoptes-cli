@@ -56,3 +56,6 @@ class Panoptes:
 
     def get_subject(self, subject_id):
         return self.get('/subjects/%s' % subject_id)
+
+    def get_subject_set(self, subject_set_id):
+        return self.get('/subject_sets/%s' % subject_set_id)

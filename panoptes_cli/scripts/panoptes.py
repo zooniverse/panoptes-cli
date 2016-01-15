@@ -10,8 +10,9 @@ def cli():
 @cli.command()
 @click.option('--id', help='Project ID', required=False, type=int)
 @click.option('--display-name')
+@click.option('--sets', is_flag=True)
 @click.argument('slug', required=False)
-def project(id, display_name, slug):
+def project(id, display_name, slug, sets):
     projects = panoptes.get_projects(id, slug=slug, display_name=display_name)
 
     for proj_data in projects['projects']:
@@ -19,6 +20,16 @@ def project(id, display_name, slug):
         click.echo('\tClassification count: %s' % proj_data['classifications_count'])
         click.echo('\tSubject count: %s' % proj_data['subjects_count'])
         click.echo('')
+
+        if sets or verbose:
+            click.echo('Subject sets:')
+
+            subject_sets = map(lambda id: panoptes.get_subject_set(id)['subject_sets'][0], proj_data['links']['subject_sets'])
+
+            for subject_set in subject_sets:
+                click.echo('\t%s: %s' % (subject_set['id'], subject_set['display_name']))
+
+            click.echo('')
 
 @cli.command()
 @click.argument('subject_id', required=True, type=int)
