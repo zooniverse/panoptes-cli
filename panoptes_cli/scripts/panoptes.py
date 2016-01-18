@@ -1,6 +1,9 @@
 import click
+from multiprocessing import Pool
+
 from panoptes_client.panoptes import Panoptes
 
+pool = Pool(processes=4)
 panoptes = Panoptes('https://panoptes.zooniverse.org/api')
 
 @click.group()
@@ -26,7 +29,7 @@ def project(id, display_name, slug, sets, roles, verbose):
         if sets or verbose:
             click.echo('Subject sets:')
 
-            subject_sets = map(lambda id: panoptes.get_subject_set(id)['subject_sets'][0], proj_data['links']['subject_sets'])
+            subject_sets = pool.map(lambda id: panoptes.get_subject_set(id)['subject_sets'][0], proj_data['links']['subject_sets'])
 
             for subject_set in subject_sets:
                 click.echo('\t%(id)s: %(display_name)s' % subject_set)
@@ -45,7 +48,7 @@ def project(id, display_name, slug, sets, roles, verbose):
                     'roles': ', '.join(role_data['roles']),
                 }
 
-            collaborators = map(get_collaborator, proj_data['links']['project_roles'])
+            collaborators = pool.map(get_collaborator, proj_data['links']['project_roles'])
 
             for collaborator in collaborators:
                 click.echo('\t%(login)s (%(id)s): %(roles)s' % collaborator)
