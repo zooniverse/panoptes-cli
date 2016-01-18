@@ -56,3 +56,12 @@ class Panoptes:
 
     def get_subject(self, subject_id):
         return self.get('/subjects/%s' % subject_id)
+
+    def get_subject_set(self, subject_set_id):
+        return self.get('/subject_sets/%s' % subject_set_id)
+
+    def get_user(self, user_id):
+        return self.get('/users/%s' % user_id)
+
+    def get_project_role(self, project_role_id):
+        return self.get('/project_roles/%s' % project_role_id)
