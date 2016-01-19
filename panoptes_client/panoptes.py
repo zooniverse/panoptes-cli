@@ -11,7 +11,7 @@ class Panoptes:
         'Content-Type': 'application/vnd.api+json; version=1'
     }
 
-    def __init__(self, endpoint):
+    def __init__(self, endpoint='https://panoptes.zooniverse.org/api'):
         self.endpoint = endpoint
 
     def _headers_for_get(self):
