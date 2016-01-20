@@ -11,8 +11,9 @@ class Panoptes:
         'Content-Type': 'application/vnd.api+json; version=1'
     }
 
-    def __init__(self, endpoint='https://panoptes.zooniverse.org/api'):
+    def __init__(self, endpoint):
         self.endpoint = endpoint
+        self.session = requests.session()
 
     def _headers_for_get(self):
         headers = self._default_headers.copy()
@@ -36,9 +37,8 @@ class Panoptes:
         _headers = self._headers_for_get().copy()
         _headers.update(headers)
         headers = _headers
-
-        r = requests.get(self.endpoint + path, params=params,  headers=headers)
-        return r.json()
+        url = self.endpoint + path
+        return self.session.get(url, params=params,  headers=headers).json()
 
     def get_projects(self, project_id, slug=None, display_name=None):
         if project_id is None:

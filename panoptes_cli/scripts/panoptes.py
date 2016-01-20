@@ -1,12 +1,13 @@
 import click
 from panoptes_client.panoptes import Panoptes
 
-panoptes = Panoptes()
+panoptes = None
 
 @click.group()
-@click.option('--endpoint', default='https://panoptes.zooniverse.org/api')
+@click.option('--endpoint', default='https://panoptes.zooniverse.org/api', type=str)
 def cli(endpoint):
-    panoptes.endpoint = endpoint
+    global panoptes
+    panoptes = Panoptes(endpoint=endpoint)
 
 @cli.command()
 @click.option('--id', help='Project ID', required=False, type=int)
