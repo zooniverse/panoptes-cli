@@ -20,7 +20,7 @@ def project(id, display_name, slug, sets, roles, verbose):
     projects = panoptes.get_projects(id, slug=slug, display_name=display_name)
 
     for proj_data in projects['projects']:
-        click.echo('Project name: %s' % proj_data['display_name'])
+        click.echo('Project: %s (ID: %s)' % (proj_data['display_name'], proj_data['id']))
         click.echo('\tClassification count: %s' % proj_data['classifications_count'])
         click.echo('\tSubject count: %s' % proj_data['subjects_count'])
         click.echo('')
