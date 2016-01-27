@@ -2,7 +2,12 @@ import click
 
 from panoptes_cli.scripts.panoptes import cli
 
-@cli.command()
+@cli.group()
+@click.pass_context
+def project(ctx):
+    ctx.panoptes = ctx.parent.panoptes
+
+@project.command()
 @click.option('--id', help='Project ID', required=False, type=int)
 @click.option('--display-name')
 @click.option('--sets', is_flag=True)
@@ -10,7 +15,7 @@ from panoptes_cli.scripts.panoptes import cli
 @click.option('--verbose', '-v', is_flag=True)
 @click.argument('slug', required=False)
 @click.pass_context
-def project(ctx, id, display_name, slug, sets, roles, verbose):
+def ls(ctx, id, display_name, slug, sets, roles, verbose):
     projects = ctx.parent.panoptes.get_projects(
         id, slug=slug, display_name=display_name
     )
