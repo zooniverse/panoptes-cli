@@ -12,7 +12,10 @@ def cli(ctx, endpoint):
     ctx.config_dir = os.path.join(os.environ['HOME'], '.panoptes')
     ctx.config_file = os.path.join(ctx.config_dir, 'config.yml')
     ctx.config = {
-        'endpoint': 'https://panoptes.zooniverse.org/api',
+        'endpoint': 'https://panoptes.zooniverse.org',
+        'username': '',
+        'password': '',
+        'client-id': None,
     }
 
     try:
@@ -24,7 +27,12 @@ def cli(ctx, endpoint):
     if endpoint:
         ctx.config['endpoint'] = endpoint
 
-    ctx.panoptes = Panoptes(endpoint=ctx.config['endpoint'])
+    ctx.panoptes = Panoptes(
+        endpoint=ctx.config['endpoint'],
+        client_id=ctx.config['client-id'],
+        username=ctx.config['username'],
+        password=ctx.config['password']
+    )
 
 from panoptes_cli.commands.configure import *
 from panoptes_cli.commands.project import *
