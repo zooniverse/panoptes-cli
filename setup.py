@@ -8,6 +8,7 @@ setup(
     install_requires=[
         'Click',
         'requests',
+        'PyYAML',
     ],
     entry_points='''
         [console_scripts]
