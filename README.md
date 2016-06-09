@@ -23,7 +23,7 @@ panoptes project ls
 
 Print all projects:
 
-```
+```python
 from panoptes_client import Project
 
 for project in Project.find():
