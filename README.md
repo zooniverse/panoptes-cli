@@ -24,9 +24,7 @@ panoptes project ls
 Print all projects:
 
 ```
-from panoptes_client import Panoptes, Project
-
-Panoptes.connect()
+from panoptes_client import Project
 
 for project in Project.find():
     print project

@@ -3,7 +3,7 @@ import requests
 from datetime import datetime, timedelta
 
 class Panoptes(object):
-    client = None
+    _client = None
 
     _default_headers = {
         'Accept': 'application/vnd.api+json; version=1',
@@ -25,6 +25,12 @@ class Panoptes(object):
     def connect(cls, *args, **kwargs):
         return cls(*args, **kwargs)
 
+    @classmethod
+    def client(cls):
+        if not cls._client:
+            cls._client = cls()
+        return cls._client
+
     def __init__(
         self,
         endpoint='https://panoptes.zooniverse.org',
@@ -32,7 +38,7 @@ class Panoptes(object):
         username=None,
         password=None
     ):
-        Panoptes.client = self
+        Panoptes._client = self
 
         self.endpoint = endpoint
         self.username = username
@@ -191,7 +197,7 @@ class PanoptesObject(object):
 
     @classmethod
     def get(cls, path, params={}, headers={}):
-        return Panoptes.client.get(
+        return Panoptes.client().get(
             cls.url(path),
             params,
             headers
@@ -199,8 +205,9 @@ class PanoptesObject(object):
 
     def __init__(self, raw=None, client=None):
         if not client:
-            client = Panoptes.client
-        self.client = client
+            self.client = Panoptes.client()
+        else:
+            self.client = client
         if raw:
             self.raw = raw
 
