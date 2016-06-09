@@ -27,7 +27,7 @@ def cli(ctx, endpoint):
     if endpoint:
         ctx.config['endpoint'] = endpoint
 
-    ctx.panoptes = Panoptes(
+    Panoptes.connect(
         endpoint=ctx.config['endpoint'],
         client_id=ctx.config['client-id'],
         username=ctx.config['username'],

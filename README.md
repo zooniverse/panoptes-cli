@@ -10,3 +10,24 @@ Install directly from GitHub:
 ```
 $ pip install git+git://github.com/zooniverse/panoptes-cli.git
 ```
+
+## Command Line Examples
+
+Print all projects:
+
+```
+panoptes project ls
+```
+
+## Python Module Examples
+
+Print all projects:
+
+```
+from panoptes_client import Panoptes, Project
+
+Panoptes.connect()
+
+for project in Project.find():
+    print project
+```

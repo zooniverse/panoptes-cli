@@ -2,7 +2,9 @@ import requests
 
 from datetime import datetime, timedelta
 
-class Panoptes:
+class Panoptes(object):
+    client = None
+
     _default_headers = {
         'Accept': 'application/vnd.api+json; version=1',
     }
@@ -19,7 +21,19 @@ class Panoptes:
         ),
     }
 
-    def __init__(self, endpoint, client_id=None, username=None, password=None):
+    @classmethod
+    def connect(cls, *args, **kwargs):
+        return cls(*args, **kwargs)
+
+    def __init__(
+        self,
+        endpoint='https://panoptes.zooniverse.org',
+        client_id=None,
+        username=None,
+        password=None
+    ):
+        Panoptes.client = self
+
         self.endpoint = endpoint
         self.username = username
         self.password = password
@@ -168,28 +182,33 @@ class Panoptes:
             )
         return self.bearer_token
 
-    def get_projects(self, project_id, slug=None, display_name=None):
-        if project_id is None:
-            project_id = ''
+class PanoptesObject(object):
+    raw = {}
 
-        params = {
-            'slug': slug,
-            'display_name': display_name,
-        }
+    @classmethod
+    def url(cls, *args):
+        return '/'.join(['', cls.slug] + list(args))
 
-        return self.get('/projects/%s' % project_id, params=params)
+    @classmethod
+    def get(cls, path, params={}, headers={}):
+        return Panoptes.client.get(
+            cls.url(path),
+            params,
+            headers
+        )
 
-    def get_project(self, project_id, slug=None, display_name=None):
-        return self.get_projects(project_id, slug, display_name)['projects'][0]
+    def __init__(self, raw=None, client=None):
+        if not client:
+            client = Panoptes.client
+        self.client = client
+        if raw:
+            self.raw = raw
 
-    def get_subject(self, subject_id):
-        return self.get('/subjects/%s' % subject_id)
-
-    def get_subject_set(self, subject_set_id):
-        return self.get('/subject_sets/%s' % subject_set_id)
-
-    def get_user(self, user_id):
-        return self.get('/users/%s' % user_id)
-
-    def get_project_role(self, project_role_id):
-        return self.get('/project_roles/%s' % project_role_id)
+    def __getattr__(self, name):
+        try:
+            return self.raw[name]
+        except KeyError:
+            raise AttributeError("'%s' object has no attribute '%s'" % (
+                self.__class__.__name__,
+                name
+            ))
