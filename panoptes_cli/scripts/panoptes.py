@@ -1,7 +1,7 @@
 import click
 import os
 import yaml
-from panoptes_client.panoptes import Panoptes
+from panoptes_client import Panoptes
 
 @click.group()
 @click.option(
@@ -15,7 +15,6 @@ def cli(ctx, endpoint):
         'endpoint': 'https://panoptes.zooniverse.org',
         'username': '',
         'password': '',
-        'client-id': None,
     }
 
     try:
@@ -29,7 +28,6 @@ def cli(ctx, endpoint):
 
     Panoptes.connect(
         endpoint=ctx.config['endpoint'],
-        client_id=ctx.config['client-id'],
         username=ctx.config['username'],
         password=ctx.config['password']
     )
@@ -37,3 +35,4 @@ def cli(ctx, endpoint):
 from panoptes_cli.commands.configure import *
 from panoptes_cli.commands.project import *
 from panoptes_cli.commands.subject import *
+from panoptes_cli.commands.subject_set import *

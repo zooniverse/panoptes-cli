@@ -13,19 +13,25 @@ $ pip install git+git://github.com/zooniverse/panoptes-cli.git
 
 ## Command Line Examples
 
-Print all projects:
+Create a new project:
 
 ```
-panoptes project ls
+$ panoptes project create --display-name "My Project" --description "This is my project"
+*2797 zooniverse/my-project My Project
 ```
 
-## Python Module Examples
+The `*` before the project ID indicates that the project is private.
 
-Print all projects:
+Create a subject set in your new project:
 
-```python
-from panoptes_client import Project
+```
+$ panoptes subject_set create --project-id 2797 --display-name "My first subject set"
+4667 My first subject set
+```
 
-for project in Project.find():
-    print project
+Make your project public:
+
+```
+$ panoptes project modify --project-id 2797 --public
+2797 zooniverse/my-project My Project
 ```

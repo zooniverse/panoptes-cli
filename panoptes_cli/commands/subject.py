@@ -1,23 +1,21 @@
 import click
 
 from panoptes_cli.scripts.panoptes import cli
+from panoptes_client import Subject
 
 @cli.group()
-@click.pass_context
-def subject(ctx):
-    ctx.panoptes = ctx.parent.panoptes
+def subject():
+    pass
 
 @subject.command()
-@click.argument('subject_id', required=True, type=int)
-@click.pass_context
-def ls(ctx, subject_id):
-    subject = ctx.parent.panoptes.get_subject(subject_id)['subjects'][0]
-    project = ctx.parent.panoptes.get_project(subject['links']['project'])
+@click.argument('subject-id', type=int)
+def ls(subject_id):
+    echo_subject(Subject.find(subject_id))
 
-    click.echo('Project: %s' % project['display_name'])
-
-    click.echo('Locations:')
-
-    for location in subject['locations']:
-        for mimetype, uri in location.items():
-            click.echo('\t%s: %s' % (mimetype, uri))
+def echo_subject(subject):
+    click.echo(
+        u'Subject {}:\n{}'.format(
+            subject.id,
+            '\n'.join(map(lambda l: l.values()[0], subject.locations))
+        )
+    )
