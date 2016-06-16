@@ -35,3 +35,9 @@ Make your project public:
 $ panoptes project modify --project-id 2797 --public
 2797 zooniverse/my-project My Project
 ```
+
+Upload subjects:
+
+```
+$ panoptes subject_set upload_subjects --subject-set-id 4667 --manifest-file manifest.csv
+```
