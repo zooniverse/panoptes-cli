@@ -5,7 +5,13 @@ the API behind [the Zooniverse](https://www.zooniverse.org/).
 
 ## Installation
 
-Install directly from GitHub:
+Install latest release:
+
+```
+$ pip install panoptescli
+```
+
+Install HEAD directly from GitHub:
 
 ```
 $ pip install git+git://github.com/zooniverse/panoptes-cli.git
