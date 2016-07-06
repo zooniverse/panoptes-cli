@@ -47,3 +47,9 @@ Upload subjects:
 ```
 $ panoptes subject_set upload_subjects --subject-set-id 4667 --manifest-file manifest.csv
 ```
+
+Generate and download a classifications export:
+
+```
+$ panoptes project download_classifications --project-id 2797 --generate --output classifications.csv
+```

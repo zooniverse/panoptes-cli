@@ -1,4 +1,5 @@
 import click
+import os
 
 from panoptes_cli.scripts.panoptes import cli
 from panoptes_client import Project
@@ -53,6 +54,20 @@ def modify(project_id, display_name, description, primary_language, private):
         project.private = private
     project.save()
     echo_project(project)
+
+@project.command()
+@click.option('--project-id', required=True, type=int)
+@click.option('--output', required=True, type=click.File('wb'))
+@click.option('--generate/--no-generate', required=False)
+@click.option('--generate-timeout', required=False, type=int, default=300)
+def download_classifications(project_id, output, generate, generate_timeout):
+    project = Project.find(project_id)
+    export = project.get_classifications_export(
+        generate=generate,
+        wait_timeout=generate_timeout
+    )
+    for chunk in export.iter_content():
+        output.write(chunk)
 
 def echo_project(project):
     click.echo(
