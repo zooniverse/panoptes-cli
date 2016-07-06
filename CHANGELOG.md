@@ -1,3 +1,7 @@
+## 0.2 (TBD)
+
+- New: Project classification exports
+
 ## 0.1 (2016-06-17)
 
 - Initial release
