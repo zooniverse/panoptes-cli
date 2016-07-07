@@ -1,6 +1,7 @@
 ## 0.2 (TBD)
 
 - New: Project classification exports
+- New: Subject retirement
 
 ## 0.1 (2016-06-17)
 
