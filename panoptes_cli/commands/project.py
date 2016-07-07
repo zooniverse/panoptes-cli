@@ -1,5 +1,4 @@
 import click
-import os
 
 from panoptes_cli.scripts.panoptes import cli
 from panoptes_client import Project
