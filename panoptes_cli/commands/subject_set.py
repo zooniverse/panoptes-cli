@@ -80,11 +80,11 @@ def upload_subjects(subject_set_id, manifest_file):
             created_subjects.append(subject)
 
             if (count + 1) % LINK_BATCH_SIZE == 0:
-                subject_set.add_subjects(created_subjects)
+                subject_set.add(created_subjects)
                 created_subjects = []
 
         if len(created_subjects) > 0:
-            subject_set.add_subjects(created_subjects)
+            subject_set.add(created_subjects)
 
 def echo_subject_set(subject_set):
     click.echo(
