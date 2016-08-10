@@ -10,12 +10,17 @@ def project():
 @project.command()
 @click.option('--project-id', required=False, type=int)
 @click.option('--display-name')
+@click.option('--launch-approved', is_flag=True)
 @click.argument('slug', required=False)
-def ls(project_id, display_name, slug):
+def ls(project_id, display_name, launch_approved, slug):
+    if not launch_approved:
+        launch_approved = None
+
     projects = Project.where(
         id=project_id,
         slug=slug,
-        display_name=display_name
+        display_name=display_name,
+        launch_approved=launch_approved
     )
 
     for project in projects:
