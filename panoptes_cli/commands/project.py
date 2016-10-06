@@ -64,9 +64,21 @@ def modify(project_id, display_name, description, primary_language, private):
 @click.option('--output', required=True, type=click.File('wb'))
 @click.option('--generate/--no-generate', required=False)
 @click.option('--generate-timeout', required=False, type=int, default=300)
-def download_classifications(project_id, output, generate, generate_timeout):
+@click.option(
+    '--data-type',
+    type=click.Choice([
+        'classifications',
+        'subjects',
+        'workflows',
+        'workflow_contents',
+        'talk_comments',
+        'talk_tags']),
+    default='classifications'
+)
+def download(project_id, output, generate, generate_timeout, data_type):
     project = Project.find(project_id)
-    export = project.get_classifications_export(
+    export = project.get_export(
+        data_type,
         generate=generate,
         wait_timeout=generate_timeout
     )
