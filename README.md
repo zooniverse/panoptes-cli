@@ -51,5 +51,11 @@ $ panoptes subject_set upload_subjects --subject-set-id 4667 --manifest-file man
 Generate and download a classifications export:
 
 ```
-$ panoptes project download_classifications --project-id 2797 --generate --output classifications.csv
+$ panoptes project download --project-id 2797 --generate --output classifications.csv
+```
+
+Generate and download a talk comments export:
+
+```
+$ panoptes project download --project-id 2797 --generate --data-type talk_comments --output classifications.csv
 ```
