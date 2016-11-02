@@ -19,6 +19,18 @@ $ pip install git+git://github.com/zooniverse/panoptes-cli.git
 
 ## Command Line Examples
 
+Log in and optionally set the API endpoint:
+
+```
+$ panoptes configure
+username []:
+password []:
+endpoint [https://panoptes.zooniverse.org]:
+```
+
+Press enter without typing anything to keep the current value (shown in
+brackets).
+
 Create a new project:
 
 ```
