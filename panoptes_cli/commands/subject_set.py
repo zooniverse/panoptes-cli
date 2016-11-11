@@ -47,7 +47,7 @@ def modify(subject_set_id, project_id, display_name):
 def upload_subjects(subject_set_id, manifest_file):
     subject_set = SubjectSet.find(subject_set_id)
     subject_rows = []
-    with open(manifest_file) as manifest_f:
+    with open(manifest_file, 'U') as manifest_f:
         file_root = os.path.dirname(manifest_file)
         r = csv.reader(manifest_f)
         headers = r.next()
