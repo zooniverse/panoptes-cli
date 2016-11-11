@@ -44,7 +44,8 @@ def modify(subject_set_id, project_id, display_name):
 @subject_set.command()
 @click.option('--subject-set-id', required=True, type=int)
 @click.option('--manifest-file', required=True)
-def upload_subjects(subject_set_id, manifest_file):
+@click.option('--allow-missing/--no-allow-missing', default=False)
+def upload_subjects(subject_set_id, manifest_file, allow_missing):
     subject_set = SubjectSet.find(subject_set_id)
     subject_rows = []
     with open(manifest_file) as manifest_f:
@@ -62,7 +63,8 @@ def upload_subjects(subject_set_id, manifest_file):
             if len(files) == 0:
                 click.echo('Could not find any files in row:', err=True)
                 click.echo(','.join(row), err=True)
-                return -1
+                if not allow_missing:
+                    return -1
             subject_rows.append((files, metadata))
 
     created_subjects = []
