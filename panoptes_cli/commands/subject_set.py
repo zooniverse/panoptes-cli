@@ -6,7 +6,7 @@ import re
 from panoptes_cli.scripts.panoptes import cli
 from panoptes_client import SubjectSet
 
-IMAGE_REGEX = r'.*\.(png|jp(e)g|gif|svg)$'
+IMAGE_REGEX = r'.*\.(png|jpe?g|gif|svg)$'
 LINK_BATCH_SIZE = 10
 
 @cli.group()
