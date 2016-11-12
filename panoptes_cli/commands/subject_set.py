@@ -65,6 +65,8 @@ def upload_subjects(subject_set_id, manifest_file, allow_missing):
                 click.echo(','.join(row), err=True)
                 if not allow_missing:
                     return -1
+                else:
+                    continue
             subject_rows.append((files, metadata))
 
     created_subjects = []
