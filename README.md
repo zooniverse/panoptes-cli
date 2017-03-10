@@ -71,3 +71,24 @@ Generate and download a talk comments export:
 ```
 $ panoptes project download --project-id 2797 --generate --data-type talk_comments --output classifications.csv
 ```
+
+List workflows in your project:
+
+```
+$ panoptes workflow ls --project-id 2797
+1579 Example workflow 1
+2251 Example workflow 2
+```
+
+Add a subject set to a workflow:
+
+```
+$ project workflow add_subject_sets 1579 4667
+```
+
+List subject sets in a workflow:
+
+```
+$ panoptes subject_set ls --workflow-id 1579
+4667 My first subject set
+```
