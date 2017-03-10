@@ -83,7 +83,7 @@ $ panoptes workflow ls --project-id 2797
 Add a subject set to a workflow:
 
 ```
-$ project workflow add_subject_sets 1579 4667
+$ panoptes workflow add_subject_sets 1579 4667
 ```
 
 List subject sets in a workflow:
