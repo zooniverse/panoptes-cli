@@ -14,9 +14,21 @@ def subject_set():
     pass
 
 @subject_set.command()
-@click.argument('subject-set-id', type=int)
-def ls(subject_set_id):
-    echo_subject_set(SubjectSet.find(subject_set_id))
+@click.argument('subject-set-id', required=False, type=int)
+@click.option('--project-id', required=False, type=int)
+@click.option('--workflow-id', required=False, type=int)
+def ls(subject_set_id, project_id, workflow_id):
+    if subject_set_id and not project_id and not workflow_id:
+        echo_subject_set(SubjectSet.find(subject_set_id))
+    else:
+        args = {}
+        if project_id:
+            args['project_id'] = project_id
+        if workflow_id:
+            args['workflow_id'] = workflow_id
+        if subject_set_id:
+            args['subject_set_id'] = subject_set_id
+        map(echo_subject_set, SubjectSet.where(**args))
 
 @subject_set.command()
 @click.option('--project-id', required=True, type=int)
