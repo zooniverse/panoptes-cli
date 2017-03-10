@@ -43,6 +43,22 @@ def retire_subjects(workflow_id, subject_ids, reason):
     workflow.retire_subjects(subject_ids, reason)
 
 
+@workflow.command()
+@click.argument('workflow-id', type=int)
+@click.argument('subject-set-ids', type=int, nargs=-1)
+def add_subject_sets(workflow_id, subject_set_ids):
+    workflow = Workflow.find(workflow_id)
+    workflow.add_subject_sets(subject_set_ids)
+
+
+@workflow.command()
+@click.argument('workflow-id', type=int)
+@click.argument('subject-set-ids', type=int, nargs=-1)
+def remove_subject_sets(workflow_id, subject_set_ids):
+    workflow = Workflow.find(workflow_id)
+    workflow.remove_subject_sets(subject_set_ids)
+
+
 def echo_workflow(workflow):
     click.echo(
         u'{} {}'.format(
