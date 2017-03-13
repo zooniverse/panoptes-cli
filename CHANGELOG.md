@@ -1,3 +1,12 @@
+## 0.4 (2017-03-13)
+
+- New: Listing subject sets by project ID and workflow ID
+- New: Listing workflows
+- New: Adding and removing subject sets to and from workflows
+- New: Allow uploading multiple manifests at once (changes arguments for
+  `subject_set upload_subjects`)
+- Increase default timeout for exports to 1 hour
+
 ## 0.3 (2016-11-21)
 
 - New: Add all data exports

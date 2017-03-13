@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='panoptescli',
-    version='0.3',
+    version='0.4',
     url='https://github.com/zooniverse/panoptes-cli',
     author='Adam McMaster',
     author_email='adam@zooniverse.org',
@@ -14,7 +14,7 @@ setup(
     install_requires=[
         'Click',
         'PyYAML',
-        'panoptes-client>=0.5,<0.6',
+        'panoptes-client>=0.5,<0.7',
     ],
     entry_points='''
         [console_scripts]
