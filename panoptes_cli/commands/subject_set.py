@@ -54,32 +54,33 @@ def modify(subject_set_id, project_id, display_name):
     echo_subject_set(subject_set)
 
 @subject_set.command()
-@click.option('--subject-set-id', required=True, type=int)
-@click.option('--manifest-file', required=True)
+@click.argument('subject-set-id', required=True, type=int)
+@click.argument('manifest-files', required=True, nargs=-1)
 @click.option('--allow-missing/--no-allow-missing', default=False)
-def upload_subjects(subject_set_id, manifest_file, allow_missing):
+def upload_subjects(subject_set_id, manifest_files, allow_missing):
     subject_set = SubjectSet.find(subject_set_id)
     subject_rows = []
-    with open(manifest_file, 'U') as manifest_f:
-        file_root = os.path.dirname(manifest_file)
-        r = csv.reader(manifest_f)
-        headers = r.next()
-        for row in r:
-            metadata = dict(zip(headers, row))
-            files = []
-            for col in row:
-                file_match = re.match(IMAGE_REGEX, col)
-                file_path = os.path.join(file_root, col)
-                if file_match and os.path.exists(file_path):
-                    files.append(file_path)
-            if len(files) == 0:
-                click.echo('Could not find any files in row:', err=True)
-                click.echo(','.join(row), err=True)
-                if not allow_missing:
-                    return -1
-                else:
-                    continue
-            subject_rows.append((files, metadata))
+    for manifest_file in manifest_files:
+        with open(manifest_file, 'U') as manifest_f:
+            file_root = os.path.dirname(manifest_file)
+            r = csv.reader(manifest_f)
+            headers = r.next()
+            for row in r:
+                metadata = dict(zip(headers, row))
+                files = []
+                for col in row:
+                    file_match = re.match(IMAGE_REGEX, col)
+                    file_path = os.path.join(file_root, col)
+                    if file_match and os.path.exists(file_path):
+                        files.append(file_path)
+                if len(files) == 0:
+                    click.echo('Could not find any files in row:', err=True)
+                    click.echo(','.join(row), err=True)
+                    if not allow_missing:
+                        return -1
+                    else:
+                        continue
+                subject_rows.append((files, metadata))
 
     created_subjects = []
     with click.progressbar(

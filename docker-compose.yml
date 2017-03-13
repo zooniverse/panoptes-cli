@@ -7,8 +7,12 @@ services:
       dockerfile: Dockerfile.dev
     volumes:
       - ${HOME}/.panoptes/:/root/.panoptes/
+      - ${HOME}:${HOME}
 
   stable:
     build:
       context: ./
       dockerfile: Dockerfile.stable
+    volumes:
+      - ${HOME}/.panoptes/:/root/.panoptes/
+      - ${HOME}:${HOME}
