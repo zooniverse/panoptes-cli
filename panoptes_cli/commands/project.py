@@ -63,7 +63,7 @@ def modify(project_id, display_name, description, primary_language, private):
 @click.option('--project-id', required=True, type=int)
 @click.option('--output', required=True, type=click.File('wb'))
 @click.option('--generate/--no-generate', required=False)
-@click.option('--generate-timeout', required=False, type=int, default=300)
+@click.option('--generate-timeout', required=False, type=int, default=3600)
 @click.option(
     '--data-type',
     type=click.Choice([
