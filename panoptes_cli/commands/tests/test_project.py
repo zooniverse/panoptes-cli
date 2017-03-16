@@ -21,12 +21,15 @@ class TestProject(unittest.TestCase):
         self.assertEqual(result.output, '')
 
     def test_ls_slug_public(self):
-        result = self.runner.invoke(ls, ['zooniverse/snapshot-supernova'])
+        result = self.runner.invoke(
+            ls,
+            ['--slug', 'zooniverse/snapshot-supernova']
+        )
         self.assertEqual(
             result.output,
             '1 zooniverse/snapshot-supernova Snapshot Supernova\n'
         )
 
     def test_ls_slug_private_anon(self):
-        result = self.runner.invoke(ls, ['astopy/testing'])
+        result = self.runner.invoke(ls, ['--slug', 'astopy/testing'])
         self.assertEqual(result.output, '')
