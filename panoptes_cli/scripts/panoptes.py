@@ -9,7 +9,7 @@ from panoptes_client import Panoptes
 )
 @click.pass_context
 def cli(ctx, endpoint):
-    ctx.config_dir = os.path.join(os.environ['HOME'], '.panoptes')
+    ctx.config_dir = os.path.expanduser('~/.panoptes/')
     ctx.config_file = os.path.join(ctx.config_dir, 'config.yml')
     ctx.config = {
         'endpoint': 'https://panoptes.zooniverse.org',
