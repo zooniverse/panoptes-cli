@@ -103,6 +103,23 @@ def upload_subjects(subject_set_id, manifest_files, allow_missing):
         if len(created_subjects) > 0:
             subject_set.add(created_subjects)
 
+
+@subject_set.command()
+@click.argument('subject-set-id', required=True, type=int)
+@click.argument('subject-ids', required=True, nargs=-1)
+def add_subjects(subject_set_id, subject_ids):
+    s = SubjectSet.find(subject_set_id)
+    s.add(subject_ids)
+
+
+@subject_set.command()
+@click.argument('subject-set-id', required=True, type=int)
+@click.argument('subject-ids', required=True, nargs=-1)
+def remove_subjects(subject_set_id, subject_ids):
+    s = SubjectSet.find(subject_set_id)
+    s.remove(subject_ids)
+
+
 def echo_subject_set(subject_set):
     click.echo(
         u'{} {}'.format(
