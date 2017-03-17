@@ -8,14 +8,20 @@ def subject():
     pass
 
 @subject.command()
-@click.argument('subject-id', type=int)
-def ls(subject_id):
-    echo_subject(Subject.find(subject_id))
+@click.option('--subject-set-id', type=int, required=False)
+@click.argument('subject-id', type=int, required=False)
+def ls(subject_set_id, subject_id):
+    if subject_id:
+        echo_subject(Subject.find(subject_id))
+        return
+
+    map(echo_subject, Subject.where(subject_set_id=subject_set_id))
+
 
 def echo_subject(subject):
     click.echo(
-        u'Subject {}:\n{}'.format(
+        u'{} {}'.format(
             subject.id,
-            '\n'.join(map(lambda l: l.values()[0], subject.locations))
+            ' '.join(map(lambda l: l.values()[0], subject.locations))
         )
     )
