@@ -4,11 +4,10 @@ import yaml
 from panoptes_client import Panoptes
 
 @click.group()
-@click.option(
-    '--endpoint', type=str
-)
+@click.option('--endpoint', type=str)
+@click.option('--admin', is_flag=True)
 @click.pass_context
-def cli(ctx, endpoint):
+def cli(ctx, endpoint, admin):
     ctx.config_dir = os.path.expanduser('~/.panoptes/')
     ctx.config_file = os.path.join(ctx.config_dir, 'config.yml')
     ctx.config = {
@@ -29,7 +28,8 @@ def cli(ctx, endpoint):
     Panoptes.connect(
         endpoint=ctx.config['endpoint'],
         username=ctx.config['username'],
-        password=ctx.config['password']
+        password=ctx.config['password'],
+        admin=admin,
     )
 
 from panoptes_cli.commands.configure import *
