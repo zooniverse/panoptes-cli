@@ -57,7 +57,7 @@ $ panoptes project modify --project-id 2797 --public
 Upload subjects:
 
 ```
-$ panoptes subject_set upload_subjects --subject-set-id 4667 --manifest-file manifest.csv
+$ panoptes subject_set upload_subjects 4667 manifest.csv
 ```
 
 Generate and download a classifications export:
