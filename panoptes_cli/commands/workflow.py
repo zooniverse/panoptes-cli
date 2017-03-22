@@ -75,6 +75,21 @@ def deactivate(workflow_id):
     workflow.save()
 
 
+@click.option('--workflow-id', required=True, type=int)
+@click.option('--output', required=True, type=click.File('wb'))
+@click.option('--generate/--no-generate', required=False)
+@click.option('--generate-timeout', required=False, type=int, default=3600)
+def download(workflow_id, output, generate, generate_timeout):
+    workflow = Workflow.find(workflow_id)
+    export = workflow.get_export(
+        'classifications',
+        generate=generate,
+        wait_timeout=generate_timeout
+    )
+    for chunk in export.iter_content():
+        output.write(chunk)
+
+
 def echo_workflow(workflow):
     click.echo(
         u'{} {}'.format(
