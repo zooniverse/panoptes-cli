@@ -59,6 +59,22 @@ def remove_subject_sets(workflow_id, subject_set_ids):
     workflow.remove_subject_sets(subject_set_ids)
 
 
+@workflow.command()
+@click.argument('workflow-id', type=int)
+def activate(workflow_id):
+    workflow = Workflow.find(workflow_id)
+    workflow.active = True
+    workflow.save()
+
+
+@workflow.command()
+@click.argument('workflow-id', type=int)
+def deactivate(workflow_id):
+    workflow = Workflow.find(workflow_id)
+    workflow.active = False
+    workflow.save()
+
+
 def echo_workflow(workflow):
     click.echo(
         u'{} {}'.format(
