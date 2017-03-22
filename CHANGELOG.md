@@ -1,3 +1,12 @@
+## 0.5 (2017-03-22)
+
+- New: Make `project ls` perform a full-text search
+- New: Allow listing subjects in a subject set
+- New: Subject to subject set linking
+- New: Add commands to activate/deactivate workflows
+- New: Add command to download workflow classifications exports
+- Fix: Use os.path.expanduser to find config directory
+
 ## 0.4 (2017-03-13)
 
 - New: Listing subject sets by project ID and workflow ID
