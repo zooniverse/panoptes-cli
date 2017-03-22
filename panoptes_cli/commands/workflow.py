@@ -75,6 +75,7 @@ def deactivate(workflow_id):
     workflow.save()
 
 
+@workflow.command()
 @click.option('--workflow-id', required=True, type=int)
 @click.option('--output', required=True, type=click.File('wb'))
 @click.option('--generate/--no-generate', required=False)
