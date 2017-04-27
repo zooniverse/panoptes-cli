@@ -60,6 +60,8 @@ Upload subjects:
 $ panoptes subject_set upload_subjects 4667 manifest.csv
 ```
 
+(Note: it's best to upload in batches of 500-1000)
+
 Generate and download a classifications export:
 
 ```
