@@ -60,7 +60,15 @@ Upload subjects:
 $ panoptes subject_set upload_subjects 4667 manifest.csv
 ```
 
-(Note: it's best to upload in batches of 500-1000)
+Local filenames will be automatically detected in the manifest and uploaded. If
+you are hosting your media yourself, you can put the URLs in the manifest and
+specify the column number(s) and optionally set the file type if you're not
+uploading PNG images:
+
+```
+$ panoptes subject_set upload_subjects -m image/jpeg -r 1 4667 manifest.csv
+$ panoptes subject_set upload_subjects -r 1 -r 2 4667 manifest.csv
+```
 
 Generate and download a classifications export:
 
