@@ -57,7 +57,30 @@ def modify(subject_set_id, project_id, display_name):
 @click.argument('subject-set-id', required=True, type=int)
 @click.argument('manifest-files', required=True, nargs=-1)
 @click.option('--allow-missing/--no-allow-missing', default=False)
-def upload_subjects(subject_set_id, manifest_files, allow_missing):
+@click.option(
+    '--remote-location',
+    '-r',
+    help=("Specify a field in the manifest which contains a URL to a remote "
+          "media location. Can be used more than once."),
+    multiple=True,
+    type=int,
+    required=False,
+)
+@click.option(
+    '--mime-type',
+    '-m',
+    help=("MIME type for remote media. Defaults to image/png."),
+    type=str,
+    required=False,
+    default='image/png',
+)
+def upload_subjects(
+    subject_set_id,
+    manifest_files,
+    allow_missing,
+    remote_location,
+    mime_type,
+):
     subject_set = SubjectSet.find(subject_set_id)
     subject_rows = []
     for manifest_file in manifest_files:
@@ -73,6 +96,10 @@ def upload_subjects(subject_set_id, manifest_files, allow_missing):
                     file_path = os.path.join(file_root, col)
                     if file_match and os.path.exists(file_path):
                         files.append(file_path)
+
+                for field_number in remote_location:
+                    files.append({mime_type: row[field_number - 1]})
+
                 if len(files) == 0:
                     click.echo('Could not find any files in row:', err=True)
                     click.echo(','.join(row), err=True)
