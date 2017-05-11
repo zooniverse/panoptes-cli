@@ -1,3 +1,7 @@
+## 0.6 (2017-05-11)
+
+- New: Add support for remote subject media locations
+
 ## 0.5 (2017-03-22)
 
 - New: Make `project ls` perform a full-text search
