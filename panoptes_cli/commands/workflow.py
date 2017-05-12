@@ -12,16 +12,33 @@ def workflow():
 @workflow.command()
 @click.argument('workflow-id', required=False, type=int)
 @click.option('--project-id', required=False, type=int)
-def ls(workflow_id, project_id):
+@click.option(
+    '--quiet',
+    '-q',
+    is_flag=True,
+    help='Only print workflow IDs',
+)
+def ls(workflow_id, project_id, quiet):
     if workflow_id and not project_id:
-        echo_workflow(Workflow.find(workflow_id))
+        workflow = Workflow.find(workflow_id)
+        if quiet:
+            click.echo(workflow.id)
+        else:
+            echo_workflow(workflow)
+        return
+
+    args = {}
+    if project_id:
+        args['project_id'] = project_id
+    if workflow_id:
+        args['workflow_id'] = workflow_id
+
+    workflows = Workflow.where(**args)
+    if quiet:
+        click.echo(" ".join([w.id for w in workflows]))
     else:
-        args = {}
-        if project_id:
-            args['project_id'] = project_id
-        if workflow_id:
-            args['workflow_id'] = workflow_id
-        map(echo_workflow, Workflow.where(**args))
+        for workflow in workflows:
+            echo_workflow(workflow)
 
 
 @workflow.command()

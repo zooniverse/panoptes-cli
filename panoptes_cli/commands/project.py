@@ -12,8 +12,14 @@ def project():
 @click.option('--display-name')
 @click.option('--launch-approved', is_flag=True)
 @click.option('--slug')
+@click.option(
+    '--quiet',
+    '-q',
+    is_flag=True,
+    help='Only print project IDs',
+)
 @click.argument('search', required=False, nargs=-1)
-def ls(project_id, display_name, launch_approved, slug, search):
+def ls(project_id, display_name, launch_approved, slug, quiet, search):
     if not launch_approved:
         launch_approved = None
 
@@ -25,8 +31,11 @@ def ls(project_id, display_name, launch_approved, slug, search):
         search=" ".join(search)
     )
 
-    for project in projects:
-        echo_project(project)
+    if quiet:
+        click.echo(" ".join([p.id for p in projects]))
+    else:
+        for project in projects:
+            echo_project(project)
 
 @project.command()
 @click.option('--display-name', required=True)

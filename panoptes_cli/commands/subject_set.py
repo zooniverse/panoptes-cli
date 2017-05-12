@@ -17,18 +17,36 @@ def subject_set():
 @click.argument('subject-set-id', required=False, type=int)
 @click.option('--project-id', required=False, type=int)
 @click.option('--workflow-id', required=False, type=int)
-def ls(subject_set_id, project_id, workflow_id):
+@click.option(
+    '--quiet',
+    '-q',
+    is_flag=True,
+    help='Only print subject set IDs',
+)
+def ls(subject_set_id, project_id, workflow_id, quiet):
     if subject_set_id and not project_id and not workflow_id:
-        echo_subject_set(SubjectSet.find(subject_set_id))
+        subject_set = SubjectSet.find(subject_set_id)
+        if quiet:
+            click.echo(subject_set.id)
+        else:
+            echo_subject_set(subject_set)
+        return
+
+    args = {}
+    if project_id:
+        args['project_id'] = project_id
+    if workflow_id:
+        args['workflow_id'] = workflow_id
+    if subject_set_id:
+        args['subject_set_id'] = subject_set_id
+
+    subject_sets = SubjectSet.where(**args)
+
+    if quiet:
+        click.echo(" ".join([s.id for s in subject_sets]))
     else:
-        args = {}
-        if project_id:
-            args['project_id'] = project_id
-        if workflow_id:
-            args['workflow_id'] = workflow_id
-        if subject_set_id:
-            args['subject_set_id'] = subject_set_id
-        map(echo_subject_set, SubjectSet.where(**args))
+        for subject_set in subject_sets:
+            echo_subject_set(subject_set)
 
 @subject_set.command()
 @click.option('--project-id', required=True, type=int)
