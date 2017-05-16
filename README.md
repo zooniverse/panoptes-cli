@@ -36,7 +36,7 @@ $ panoptes subject_set upload_subjects --help
 $ panoptes configure
 username []:
 password []:
-endpoint [https://panoptes.zooniverse.org]:
+endpoint [https://www.zooniverse.org]:
 ```
 
 Press enter without typing anything to keep the current value (shown in

@@ -11,7 +11,7 @@ def cli(ctx, endpoint, admin):
     ctx.config_dir = os.path.expanduser('~/.panoptes/')
     ctx.config_file = os.path.join(ctx.config_dir, 'config.yml')
     ctx.config = {
-        'endpoint': 'https://panoptes.zooniverse.org',
+        'endpoint': 'https://www.zooniverse.org',
         'username': '',
         'password': '',
     }
