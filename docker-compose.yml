@@ -8,6 +8,7 @@ services:
     volumes:
       - ${HOME}/.panoptes/:/root/.panoptes/
       - ${HOME}:${HOME}
+    working_dir: ${PWD}
 
   stable:
     build:
@@ -16,3 +17,22 @@ services:
     volumes:
       - ${HOME}/.panoptes/:/root/.panoptes/
       - ${HOME}:${HOME}
+    working_dir: ${PWD}
+
+  dev2:
+    build:
+      context:  ./
+      dockerfile: Dockerfile.dev2
+    volumes:
+      - ${HOME}/.panoptes/:/root/.panoptes/
+      - ${HOME}:${HOME}
+    working_dir: ${PWD}
+
+  stable2:
+    build:
+      context: ./
+      dockerfile: Dockerfile.stable2
+    volumes:
+      - ${HOME}/.panoptes/:/root/.panoptes/
+      - ${HOME}:${HOME}
+    working_dir: ${PWD}
