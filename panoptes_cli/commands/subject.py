@@ -15,14 +15,15 @@ def subject():
     is_flag=True,
     help='Only print subject IDs',
 )
-@click.argument('subject-id', type=int, required=False)
-def ls(subject_set_id, quiet, subject_id):
-    if subject_id:
-        subject = Subject.find(subject_id)
-        if quiet:
-            click.echo(subject.id)
-        else:
-            echo_subject(subject)
+@click.argument('subject-ids', type=int, required=False, nargs=-1)
+def ls(subject_set_id, quiet, subject_ids):
+    if subject_ids:
+        for subject_id in subject_ids:
+            subject = Subject.find(subject_id)
+            if quiet:
+                click.echo(subject.id)
+            else:
+                echo_subject(subject)
         return
 
     subjects = Subject.where(subject_set_id=subject_set_id)
@@ -37,6 +38,6 @@ def echo_subject(subject):
     click.echo(
         u'{} {}'.format(
             subject.id,
-            ' '.join(map(lambda l: l.values()[0], subject.locations))
+            ' '.join(map(lambda l: list(l.values())[0], subject.locations))
         )
     )
