@@ -8,7 +8,12 @@ def subject():
     pass
 
 @subject.command()
-@click.option('--subject-set-id', type=int, required=False)
+@click.option(
+    '--subject-set-id',
+    '-s',
+    type=int,
+    required=False
+)
 @click.option(
     '--quiet',
     '-q',
