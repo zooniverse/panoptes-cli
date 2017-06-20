@@ -1,3 +1,10 @@
+## 0.7 (2017-06-20)
+
+- New: Add 'quiet' option to ls commands
+- New: Allow listing multiple subjects by ID
+- New: Add short option for subject set id in subject ls
+- Fix: Use next(reader) rather than reader.next()
+
 ## 0.6 (2017-05-11)
 
 - New: Add support for remote subject media locations
