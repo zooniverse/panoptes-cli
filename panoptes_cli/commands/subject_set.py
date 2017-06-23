@@ -9,14 +9,16 @@ from panoptes_client import SubjectSet
 IMAGE_REGEX = r'.*\.(png|jpe?g|gif|svg)$'
 LINK_BATCH_SIZE = 10
 
-@cli.group()
+
+@cli.group(name='subject-set')
 def subject_set():
     pass
 
+
 @subject_set.command()
 @click.argument('subject-set-id', required=False, type=int)
-@click.option('--project-id', required=False, type=int)
-@click.option('--workflow-id', required=False, type=int)
+@click.option('--project-id', '-p', required=False, type=int)
+@click.option('--workflow-id', '-w', required=False, type=int)
 @click.option(
     '--quiet',
     '-q',
@@ -48,9 +50,10 @@ def ls(subject_set_id, project_id, workflow_id, quiet):
         for subject_set in subject_sets:
             echo_subject_set(subject_set)
 
+
 @subject_set.command()
-@click.option('--project-id', required=True, type=int)
-@click.option('--display-name', required=True)
+@click.argument('project-id', required=True, type=int)
+@click.argument('display-name', required=True)
 def create(project_id, display_name):
     subject_set = SubjectSet()
     subject_set.links.project = project_id
@@ -58,10 +61,11 @@ def create(project_id, display_name):
     subject_set.save()
     echo_subject_set(subject_set)
 
+
 @subject_set.command()
-@click.option('--subject-set-id', required=True, type=int)
-@click.option('--project-id', required=False, type=int)
-@click.option('--display-name', required=False)
+@click.argument('subject-set-id', required=True, type=int)
+@click.option('--project-id', '-p', required=False, type=int)
+@click.option('--display-name', '-n', required=False)
 def modify(subject_set_id, project_id, display_name):
     subject_set = SubjectSet.find(subject_set_id)
     if project_id:
@@ -71,10 +75,16 @@ def modify(subject_set_id, project_id, display_name):
     subject_set.save()
     echo_subject_set(subject_set)
 
-@subject_set.command()
+
+@subject_set.command(name='upload-subjects')
 @click.argument('subject-set-id', required=True, type=int)
 @click.argument('manifest-files', required=True, nargs=-1)
-@click.option('--allow-missing/--no-allow-missing', default=False)
+@click.option(
+    '--allow-missing',
+    '-M',
+    help=("Do not abort when creating subjects with no media files."),
+    is_flag=True,
+)
 @click.option(
     '--remote-location',
     '-r',
@@ -149,7 +159,7 @@ def upload_subjects(
             subject_set.add(created_subjects)
 
 
-@subject_set.command()
+@subject_set.command(name='add-subjects')
 @click.argument('subject-set-id', required=True, type=int)
 @click.argument('subject-ids', required=True, nargs=-1)
 def add_subjects(subject_set_id, subject_ids):
@@ -157,7 +167,7 @@ def add_subjects(subject_set_id, subject_ids):
     s.add(subject_ids)
 
 
-@subject_set.command()
+@subject_set.command(name='remove-subjects')
 @click.argument('subject-set-id', required=True, type=int)
 @click.argument('subject-ids', required=True, nargs=-1)
 def remove_subjects(subject_set_id, subject_ids):

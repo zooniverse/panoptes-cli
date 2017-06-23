@@ -4,8 +4,14 @@ import yaml
 from panoptes_client import Panoptes
 
 @click.group()
-@click.option('--endpoint', type=str)
-@click.option('--admin', is_flag=True)
+@click.option('--endpoint', '-e', type=str)
+@click.option(
+    '--admin',
+    '-a',
+    help=("Enable admin mode. Ignored if you're not logged in as an "
+          "administrator."),
+    is_flag=True,
+)
 @click.pass_context
 def cli(ctx, endpoint, admin):
     ctx.config_dir = os.path.expanduser('~/.panoptes/')

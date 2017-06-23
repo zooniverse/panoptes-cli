@@ -27,7 +27,7 @@ commands and their options, use the built in help. E.g.:
 ```
 $ panoptes --help
 $ panoptes project --help
-$ panoptes subject_set upload_subjects --help
+$ panoptes subject-set upload-subjects --help
 ```
 
 ### Log in and optionally set the API endpoint
@@ -46,7 +46,7 @@ your own copy of the Panoptes API.
 ### Create a new project
 
 ```
-$ panoptes project create --display-name "My Project" --description "This is my project"
+$ panoptes project create "My Project" "This is a description of my project"
 *2797 zooniverse/my-project My Project
 ```
 
@@ -55,21 +55,21 @@ The `*` before the project ID indicates that the project is private.
 ### Create a subject set in your new project
 
 ```
-$ panoptes subject_set create --project-id 2797 --display-name "My first subject set"
+$ panoptes subject-set create 2797 "My first subject set"
 4667 My first subject set
 ```
 
 ### Make your project public
 
 ```
-$ panoptes project modify --project-id 2797 --public
+$ panoptes project modify --public 2797
 2797 zooniverse/my-project My Project
 ```
 
 ### Upload subjects
 
 ```
-$ panoptes subject_set upload_subjects 4667 manifest.csv
+$ panoptes subject-set upload-subjects 4667 manifest.csv
 ```
 
 Local filenames will be automatically detected in the manifest and uploaded. If
@@ -78,26 +78,26 @@ specify the column number(s) and optionally set the file type if you're not
 uploading PNG images:
 
 ```
-$ panoptes subject_set upload_subjects -m image/jpeg -r 1 4667 manifest.csv
-$ panoptes subject_set upload_subjects -r 1 -r 2 4667 manifest.csv
+$ panoptes subject-set upload-subjects -m image/jpeg -r 1 4667 manifest.csv
+$ panoptes subject-set upload-subjects -r 1 -r 2 4667 manifest.csv
 ```
 
 ### Generate and download a classifications export
 
 ```
-$ panoptes project download --project-id 2797 --generate --output classifications.csv
+$ panoptes project download --generate 2797 classifications.csv
 ```
 
 ### Generate and download a talk comments export
 
 ```
-$ panoptes project download --project-id 2797 --generate --data-type talk_comments --output classifications.csv
+$ panoptes project download --generate --data-type talk_comments 2797 classifications.csv
 ```
 
 ### List workflows in your project
 
 ```
-$ panoptes workflow ls --project-id 2797
+$ panoptes workflow ls -p 2797
 1579 Example workflow 1
 2251 Example workflow 2
 ```
@@ -105,24 +105,24 @@ $ panoptes workflow ls --project-id 2797
 ### Add a subject set to a workflow
 
 ```
-$ panoptes workflow add_subject_sets 1579 4667
+$ panoptes workflow add-subject-sets 1579 4667
 ```
 
 ### List subject sets in a workflow
 
 ```
-$ panoptes subject_set ls --workflow-id 1579
+$ panoptes subject-set ls -w 1579
 4667 My first subject set
 ```
 
 ### List subject sets in a project
 
 ```
-$ panoptes subject_set ls --project-id 2797
+$ panoptes subject-set ls -p 2797
 ```
 
 ### Verify that subject set 4667 is in project 2797
 
 ```
-$ panoptes subject_set ls --project-id 2797 4667
+$ panoptes subject-set ls -p 2797 4667
 ```
