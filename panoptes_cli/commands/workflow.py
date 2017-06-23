@@ -11,7 +11,7 @@ def workflow():
 
 @workflow.command()
 @click.argument('workflow-id', required=False, type=int)
-@click.option('--project-id', required=False, type=int)
+@click.option('--project-id', '-p', required=False, type=int)
 @click.option(
     '--quiet',
     '-q',
@@ -41,11 +41,12 @@ def ls(workflow_id, project_id, quiet):
             echo_workflow(workflow)
 
 
-@workflow.command()
+@workflow.command(name='retire-subjects')
 @click.argument('workflow-id', type=int)
 @click.argument('subject-ids', type=int, nargs=-1)
 @click.option(
     '--reason',
+    '-r',
     type=click.Choice((
         'classification_count',
         'flagged',
@@ -60,7 +61,7 @@ def retire_subjects(workflow_id, subject_ids, reason):
     workflow.retire_subjects(subject_ids, reason)
 
 
-@workflow.command()
+@workflow.command(name='add-subject-sets')
 @click.argument('workflow-id', type=int)
 @click.argument('subject-set-ids', type=int, nargs=-1)
 def add_subject_sets(workflow_id, subject_set_ids):
@@ -68,7 +69,7 @@ def add_subject_sets(workflow_id, subject_set_ids):
     workflow.add_subject_sets(subject_set_ids)
 
 
-@workflow.command()
+@workflow.command(name='remove-subject-sets')
 @click.argument('workflow-id', type=int)
 @click.argument('subject-set-ids', type=int, nargs=-1)
 def remove_subject_sets(workflow_id, subject_set_ids):
@@ -93,11 +94,17 @@ def deactivate(workflow_id):
 
 
 @workflow.command()
-@click.option('--workflow-id', required=True, type=int)
-@click.option('--output', required=True, type=click.File('wb'))
-@click.option('--generate/--no-generate', required=False)
-@click.option('--generate-timeout', required=False, type=int, default=3600)
-def download(workflow_id, output, generate, generate_timeout):
+@click.argument('workflow-id', required=True, type=int)
+@click.argument('output-file', required=True, type=click.File('wb'))
+@click.option('--generate', '-g', is_flag=True)
+@click.option(
+    '--generate-timeout',
+    '-T',
+    required=False,
+    type=int,
+    default=3600
+)
+def download(workflow_id, output_file, generate, generate_timeout):
     workflow = Workflow.find(workflow_id)
     export = workflow.get_export(
         'classifications',
@@ -105,7 +112,7 @@ def download(workflow_id, output, generate, generate_timeout):
         wait_timeout=generate_timeout
     )
     for chunk in export.iter_content():
-        output.write(chunk)
+        output_file.write(chunk)
 
 
 def echo_workflow(workflow):
