@@ -146,7 +146,8 @@ def upload_subjects(
         for count, (files, metadata) in _subject_rows:
             subject = Subject()
             subject.links.project = subject_set.links.project
-            map(subject.add_location, files)
+            for media_file in files:
+                subject.add_location(media_file)
             subject.metadata.update(metadata)
             subject.save()
             created_subjects.append(subject)
