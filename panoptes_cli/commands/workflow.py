@@ -102,7 +102,6 @@ def deactivate(workflow_id):
     '-T',
     required=False,
     type=int,
-    default=3600
 )
 def download(workflow_id, output_file, generate, generate_timeout):
     workflow = Workflow.find(workflow_id)

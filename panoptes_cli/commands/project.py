@@ -79,7 +79,6 @@ def modify(project_id, display_name, description, primary_language, public):
     '-T',
     required=False,
     type=int,
-    default=3600
 )
 @click.option(
     '--data-type',
