@@ -93,7 +93,7 @@ def deactivate(workflow_id):
     workflow.save()
 
 
-@workflow.command()
+@workflow.command(name="download-classifications")
 @click.argument('workflow-id', required=True, type=int)
 @click.argument('output-file', required=True, type=click.File('wb'))
 @click.option('--generate', '-g', is_flag=True)
@@ -103,7 +103,12 @@ def deactivate(workflow_id):
     required=False,
     type=int,
 )
-def download(workflow_id, output_file, generate, generate_timeout):
+def download_classifications(
+    workflow_id,
+    output_file,
+    generate,
+    generate_timeout
+):
     workflow = Workflow.find(workflow_id)
     export = workflow.get_export(
         'classifications',
