@@ -1,3 +1,10 @@
+## 0.8 (2017-08-04)
+
+- New: Set default endpoint to www.zooniverse.org
+- New: Standardise options and arguments
+- Fix: Fix remote media in Python 3
+- Remove default download timeouts
+
 ## 0.7 (2017-06-20)
 
 - New: Add 'quiet' option to ls commands
