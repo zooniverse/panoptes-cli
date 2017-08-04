@@ -14,7 +14,7 @@ setup(
     install_requires=[
         'Click',
         'PyYAML',
-        'panoptes-client>=0.9,<0.10',
+        'panoptes-client>=0.10,<0.11',
     ],
     entry_points='''
         [console_scripts]
