@@ -27,7 +27,7 @@ commands and their options, use the built in help. E.g.:
 ```
 $ panoptes --help
 $ panoptes project --help
-$ panoptes subject-set upload-subjects --help
+$ panoptes subject_set upload_subjects --help
 ```
 
 ### Log in and optionally set the API endpoint
@@ -55,7 +55,7 @@ The `*` before the project ID indicates that the project is private.
 ### Create a subject set in your new project
 
 ```
-$ panoptes subject-set create 2797 "My first subject set"
+$ panoptes subject_set create 2797 "My first subject set"
 4667 My first subject set
 ```
 
@@ -69,7 +69,7 @@ $ panoptes project modify --public 2797
 ### Upload subjects
 
 ```
-$ panoptes subject-set upload-subjects 4667 manifest.csv
+$ panoptes subject_set upload_subjects 4667 manifest.csv
 ```
 
 Local filenames will be automatically detected in the manifest and uploaded. If
@@ -78,8 +78,8 @@ specify the column number(s) and optionally set the file type if you're not
 uploading PNG images:
 
 ```
-$ panoptes subject-set upload-subjects -m image/jpeg -r 1 4667 manifest.csv
-$ panoptes subject-set upload-subjects -r 1 -r 2 4667 manifest.csv
+$ panoptes subject_set upload_subjects -m image/jpeg -r 1 4667 manifest.csv
+$ panoptes subject_set upload_subjects -r 1 -r 2 4667 manifest.csv
 ```
 
 ### Generate and download a classifications export
@@ -105,24 +105,24 @@ $ panoptes workflow ls -p 2797
 ### Add a subject set to a workflow
 
 ```
-$ panoptes workflow add-subject-sets 1579 4667
+$ panoptes workflow add_subject_sets 1579 4667
 ```
 
 ### List subject sets in a workflow
 
 ```
-$ panoptes subject-set ls -w 1579
+$ panoptes subject_set ls -w 1579
 4667 My first subject set
 ```
 
 ### List subject sets in a project
 
 ```
-$ panoptes subject-set ls -p 2797
+$ panoptes subject_set ls -p 2797
 ```
 
 ### Verify that subject set 4667 is in project 2797
 
 ```
-$ panoptes subject-set ls -p 2797 4667
+$ panoptes subject_set ls -p 2797 4667
 ```
