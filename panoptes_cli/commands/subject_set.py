@@ -2,11 +2,12 @@ import click
 import csv
 import os
 import re
+import sys
 
 from panoptes_cli.scripts.panoptes import cli
 from panoptes_client import SubjectSet
+from panoptes_client.panoptes import PanoptesAPIException
 
-IMAGE_REGEX = r'.*\.(png|jpe?g|gif|svg)$'
 LINK_BATCH_SIZE = 10
 
 
@@ -120,9 +121,8 @@ def upload_subjects(
                 metadata = dict(zip(headers, row))
                 files = []
                 for col in row:
-                    file_match = re.match(IMAGE_REGEX, col)
                     file_path = os.path.join(file_root, col)
-                    if file_match and os.path.exists(file_path):
+                    if os.path.exists(file_path):
                         files.append(file_path)
 
                 for field_number in remote_location:
@@ -149,7 +149,21 @@ def upload_subjects(
             for media_file in files:
                 subject.add_location(media_file)
             subject.metadata.update(metadata)
-            subject.save()
+            try:
+                subject.save()
+            except PanoptesAPIException as e:
+                click.echo(
+                    (
+                        "\nError: Could not save subject in row {}\n"
+                        "The API returned error: {}"
+                    ).format(
+                        count + 2,
+                        e,
+                    ),
+                    err=True,
+                )
+                sys.exit(1)
+
             created_subjects.append(subject)
 
             if (count + 1) % LINK_BATCH_SIZE == 0:
