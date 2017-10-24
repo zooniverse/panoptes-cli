@@ -3,6 +3,8 @@ import os
 import yaml
 from panoptes_client import Panoptes
 
+
+@click.version_option(prog_name='Panoptes CLI')
 @click.group()
 @click.option('--endpoint', '-e', type=str)
 @click.option(
