@@ -41,6 +41,7 @@ def cli(ctx, endpoint, admin):
     )
 
 from panoptes_cli.commands.configure import *
+from panoptes_cli.commands.info import *
 from panoptes_cli.commands.project import *
 from panoptes_cli.commands.subject import *
 from panoptes_cli.commands.subject_set import *
