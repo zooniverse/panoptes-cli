@@ -19,6 +19,28 @@ bugs/untested/incomplete features):
 $ pip install git+git://github.com/zooniverse/panoptes-cli.git
 ```
 
+To upgrade an existing installation to the latest version:
+
+```
+pip install -U panoptescli
+```
+
+## Uploading non-image media types
+
+If you wish to upload subjects with non-image media (e.g. audio or video),
+you will need to make sure you have the `libmagic` library installed. If you
+don't already have `libmagic`, please see the [dependency information for
+python-magic](https://github.com/ahupp/python-magic#dependencies) for more
+details.
+
+To check if `libmagic` is installed, run this command:
+
+```
+$ panoptes info
+```
+
+If you see `libmagic: False` in the output then it isn't installed.
+
 ## Command Line Examples
 
 This readme does not list everything that the CLI can do. For a full list of
