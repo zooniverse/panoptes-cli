@@ -12,8 +12,8 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
-        'Click',
-        'PyYAML',
+        'Click>=6.7,<6.8',
+        'PyYAML>=3.12,<3.13',
         'panoptes-client>=0.10,<0.11',
     ],
     entry_points='''
