@@ -27,7 +27,7 @@ def info(ctx):
     }
 
     try:
-        info['libmagic'] = pkg_resources.require("magic")[0].version
+        info['libmagic'] = pkg_resources.require("python-magic")[0].version
     except pkg_resources.DistributionNotFound:
         info['libmagic'] = False
 
