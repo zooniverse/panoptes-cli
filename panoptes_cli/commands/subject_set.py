@@ -13,20 +13,35 @@ LINK_BATCH_SIZE = 10
 
 @cli.group(name='subject-set')
 def subject_set():
+    """Contains commands for managing subject sets."""
     pass
 
 
 @subject_set.command()
 @click.argument('subject-set-id', required=False, type=int)
-@click.option('--project-id', '-p', required=False, type=int)
-@click.option('--workflow-id', '-w', required=False, type=int)
+@click.option(
+    '--project-id',
+    '-p',
+    help="Show subject sets belonging to the given project.",
+    required=False,
+    type=int
+)
+@click.option(
+    '--workflow-id',
+    '-w',
+    help="Show subject sets linked to the given workflow.",
+    required=False,
+    type=int
+)
 @click.option(
     '--quiet',
     '-q',
+    help='Only print subject set IDs (omit names).',
     is_flag=True,
-    help='Only print subject set IDs',
 )
 def ls(subject_set_id, project_id, workflow_id, quiet):
+    """Lists subject set IDs and names"""
+
     if subject_set_id and not project_id and not workflow_id:
         subject_set = SubjectSet.find(subject_set_id)
         if quiet:
@@ -56,6 +71,12 @@ def ls(subject_set_id, project_id, workflow_id, quiet):
 @click.argument('project-id', required=True, type=int)
 @click.argument('display-name', required=True)
 def create(project_id, display_name):
+    """
+    Creates a new subject set.
+
+    Prints the subject set ID and name of the new subject set.
+    """
+
     subject_set = SubjectSet()
     subject_set.links.project = project_id
     subject_set.display_name = display_name
@@ -65,12 +86,19 @@ def create(project_id, display_name):
 
 @subject_set.command()
 @click.argument('subject-set-id', required=True, type=int)
-@click.option('--project-id', '-p', required=False, type=int)
-@click.option('--display-name', '-n', required=False)
-def modify(subject_set_id, project_id, display_name):
+@click.option(
+    '--display-name',
+    '-n',
+    help="Sets the subject set's public display name.",
+    required=False
+)
+def modify(subject_set_id, display_name):
+    """
+    Changes the attributes of an existing subject set.
+
+    Any attributes which are not specified are left unchanged.
+    """
     subject_set = SubjectSet.find(subject_set_id)
-    if project_id:
-        subject_set.links.project = project_id
     if display_name:
         subject_set.display_name = display_name
     subject_set.save()
@@ -89,8 +117,10 @@ def modify(subject_set_id, project_id, display_name):
 @click.option(
     '--remote-location',
     '-r',
-    help=("Specify a field in the manifest which contains a URL to a remote "
-          "media location. Can be used more than once."),
+    help=(
+        "Specify a field (by column number) in the manifest which contains a "
+        "URL to a remote media location. Can be used more than once."
+    ),
     multiple=True,
     type=int,
     required=False,
@@ -98,7 +128,10 @@ def modify(subject_set_id, project_id, display_name):
 @click.option(
     '--mime-type',
     '-m',
-    help=("MIME type for remote media. Defaults to image/png."),
+    help=(
+        "MIME type for remote media. Defaults to image/png. Has no effect "
+        "without --remote-location."
+    ),
     type=str,
     required=False,
     default='image/png',
@@ -110,6 +143,26 @@ def upload_subjects(
     remote_location,
     mime_type,
 ):
+    """
+    Uploads subjects from each of the given MANIFEST_FILES.
+
+    Example with only local files:
+
+    $ panoptes subject-set upload-subjects 4667 manifest.csv
+
+    Local filenames will be automatically detected in the manifest and
+    uploaded.
+
+    If you are hosting your media yourself, you can put the URLs in the
+    manifest and specify the column number(s):
+
+    $ panoptes subject-set upload-subjects -r 1 4667 manifest.csv
+
+    $ panoptes subject-set upload-subjects -r 1 -r 2 4667 manifest.csv
+
+    Any local files will still be detected and uploaded.
+    """
+
     subject_set = SubjectSet.find(subject_set_id)
     subject_rows = []
     for manifest_file in manifest_files:
@@ -178,6 +231,14 @@ def upload_subjects(
 @click.argument('subject-set-id', required=True, type=int)
 @click.argument('subject-ids', required=True, nargs=-1)
 def add_subjects(subject_set_id, subject_ids):
+    """
+    Links existing subjects to this subject set.
+
+    This command is useful mainly for adding previously uploaded subjects to
+    additional subject sets.
+
+    See the upload-subjects command to create new subjects in a subject set.
+    """
     s = SubjectSet.find(subject_set_id)
     s.add(subject_ids)
 
@@ -186,6 +247,13 @@ def add_subjects(subject_set_id, subject_ids):
 @click.argument('subject-set-id', required=True, type=int)
 @click.argument('subject-ids', required=True, nargs=-1)
 def remove_subjects(subject_set_id, subject_ids):
+    """
+    Unlinks subjects from this subject set.
+
+    The subjects themselves are not deleted or modified in any way and will
+    still be present in any other sets they're linked to.
+    """
+
     s = SubjectSet.find(subject_set_id)
     s.remove(subject_ids)
 

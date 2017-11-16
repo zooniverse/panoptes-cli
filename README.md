@@ -5,7 +5,23 @@ the API behind [the Zooniverse](https://www.zooniverse.org/).
 
 ## Installation
 
-In most cases, you can just use `pip` to install the latest release:
+The Panoptes CLI is written in Python, so in order to install it you will need
+to install either Python 2 or Python 3, along with `pip`. macOS and Linux
+already come with Python installed, so run this to see if you already have
+everything you need:
+
+```
+$ python --version && pip --version
+```
+
+If you see an error like `python: command not found` or `pip: command not found`
+then you will need to install this:
+
+- [Python installation](https://wiki.python.org/moin/BeginnersGuide/Download)
+- [Pip installation](https://pip.pypa.io/en/stable/installing/)
+
+Once these are installed you can just use `pip` to install the latest release of
+the CLI:
 
 ```
 $ pip install panoptescli
@@ -23,6 +39,81 @@ To upgrade an existing installation to the latest version:
 
 ```
 pip install -U panoptescli
+```
+
+## Built-in help
+
+Every command comes with a built in `--help` option, which explains how to use
+it.
+
+```
+$ panoptes --help
+Usage: panoptes [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  -e, --endpoint TEXT  Overides the default API endpoint
+  -a, --admin          Enables admin mode. Ignored if you're not logged in as
+                       an administrator.
+  --version            Show the version and exit.
+  --help               Show this message and exit.
+
+Commands:
+  configure    Sets default values for configuration...
+  info         Displays version and environment information...
+  project      Contains commands for managing projects.
+  subject      Contains commands for retrieving information...
+  subject-set  Contains commands for managing subject sets.
+  workflow     Contains commands for managing workflows.
+```
+
+```
+$ panoptes project --help
+Usage: panoptes project [OPTIONS] COMMAND [ARGS]...
+
+  Contains commands for managing projects.
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  create    Creates a new project.
+  download  Downloads project-level data exports.
+  ls        Lists project IDs and names.
+  modify    Changes the attributes of an existing...
+```
+
+```
+$ panoptes subject-set upload-subjects --help
+Usage: panoptes subject-set upload-subjects [OPTIONS] SUBJECT_SET_ID MANIFEST_FILES...
+
+  Uploads subjects from each of the given MANIFEST_FILES.
+
+  Example with only local files:
+
+  $ panoptes subject-set upload-subjects 4667 manifest.csv
+
+  Local filenames will be automatically detected in the manifest and
+  uploaded.
+
+  If you are hosting your media yourself, you can put the URLs in the
+  manifest and specify the column number(s):
+
+  $ panoptes subject-set upload-subjects -r 1 4667 manifest.csv
+
+  $ panoptes subject-set upload-subjects -r 1 -r 2 4667 manifest.csv
+
+  Any local files will still be detected and uploaded.
+
+Options:
+  -M, --allow-missing            Do not abort when creating subjects with no
+                                 media files.
+  -r, --remote-location INTEGER  Specify a field (by column number) in the
+                                 manifest which contains a URL to a remote
+                                 media location. Can be used more than once.
+  -m, --mime-type TEXT           MIME type for remote media. Defaults to
+                                 image/png. Has no effect without --remote-
+                                 location.
+  --help                         Show this message and exit.
 ```
 
 ## Uploading non-image media types
@@ -44,13 +135,7 @@ If you see `libmagic: False` in the output then it isn't installed.
 ## Command Line Examples
 
 This readme does not list everything that the CLI can do. For a full list of
-commands and their options, use the built in help. E.g.:
-
-```
-$ panoptes --help
-$ panoptes project --help
-$ panoptes subject-set upload-subjects --help
-```
+commands and their options, use the built in help as described above.
 
 ### Log in and optionally set the API endpoint
 

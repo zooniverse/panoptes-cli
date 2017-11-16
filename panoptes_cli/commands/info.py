@@ -9,6 +9,8 @@ from panoptes_cli.scripts.panoptes import cli
 @cli.command()
 @click.pass_context
 def info(ctx):
+    """Displays version and environment information for debugging."""
+
     info = {
         'Panoptes CLI version': (
             pkg_resources.require("panoptescli")[0].version
