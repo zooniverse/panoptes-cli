@@ -6,19 +6,28 @@ from panoptes_client import Workflow
 
 @cli.group()
 def workflow():
+    """Contains commands for managing workflows."""
     pass
 
 
 @workflow.command()
 @click.argument('workflow-id', required=False, type=int)
-@click.option('--project-id', '-p', required=False, type=int)
+@click.option(
+    '--project-id',
+    '-p',
+    help="List workflows linked to the given project.",
+    required=False,
+    type=int,
+)
 @click.option(
     '--quiet',
     '-q',
     is_flag=True,
-    help='Only print workflow IDs',
+    help='Only print workflow IDs (omit names).',
 )
 def ls(workflow_id, project_id, quiet):
+    """Lists workflow IDs and names."""
+
     if workflow_id and not project_id:
         workflow = Workflow.find(workflow_id)
         if quiet:
@@ -47,6 +56,7 @@ def ls(workflow_id, project_id, quiet):
 @click.option(
     '--reason',
     '-r',
+    help="The reason for retiring the subject.",
     type=click.Choice((
         'classification_count',
         'flagged',
@@ -57,6 +67,12 @@ def ls(workflow_id, project_id, quiet):
     default='other'
 )
 def retire_subjects(workflow_id, subject_ids, reason):
+    """
+    Retires subjects from the given workflow.
+
+    The subjects will no longer be served to volunteers for classification.
+    """
+
     workflow = Workflow.find(workflow_id)
     workflow.retire_subjects(subject_ids, reason)
 
@@ -65,6 +81,8 @@ def retire_subjects(workflow_id, subject_ids, reason):
 @click.argument('workflow-id', type=int)
 @click.argument('subject-set-ids', type=int, nargs=-1)
 def add_subject_sets(workflow_id, subject_set_ids):
+    """Links existing subject sets to the given workflow."""
+
     workflow = Workflow.find(workflow_id)
     workflow.add_subject_sets(subject_set_ids)
 
@@ -73,6 +91,8 @@ def add_subject_sets(workflow_id, subject_set_ids):
 @click.argument('workflow-id', type=int)
 @click.argument('subject-set-ids', type=int, nargs=-1)
 def remove_subject_sets(workflow_id, subject_set_ids):
+    """Unlinks the given subject sets from the given workflow."""
+
     workflow = Workflow.find(workflow_id)
     workflow.remove_subject_sets(subject_set_ids)
 
@@ -80,6 +100,8 @@ def remove_subject_sets(workflow_id, subject_set_ids):
 @workflow.command()
 @click.argument('workflow-id', type=int)
 def activate(workflow_id):
+    """Activates the given workflow."""
+
     workflow = Workflow.find(workflow_id)
     workflow.active = True
     workflow.save()
@@ -88,6 +110,8 @@ def activate(workflow_id):
 @workflow.command()
 @click.argument('workflow-id', type=int)
 def deactivate(workflow_id):
+    """Deactivates the given workflow."""
+
     workflow = Workflow.find(workflow_id)
     workflow.active = False
     workflow.save()
@@ -109,14 +133,32 @@ def download_classifications(
     generate,
     generate_timeout
 ):
+    """
+    Downloads a workflow-specific classifications export for the given workflow.
+
+    OUTPUT_FILE will be overwritten if it already exists. Set OUTPUT_FILE to -
+    to output to stdout.
+    """
+
     workflow = Workflow.find(workflow_id)
+
+    if generate:
+        click.echo("Generating new export...", err=True)
+
     export = workflow.get_export(
         'classifications',
         generate=generate,
         wait_timeout=generate_timeout
     )
-    for chunk in export.iter_content():
-        output_file.write(chunk)
+
+    with click.progressbar(
+        export.iter_content(chunk_size=1024),
+        label='Downloading',
+        length=(int(export.headers.get('content-length')) / 1024 + 1),
+        file=click.get_text_stream('stderr'),
+    ) as chunks:
+        for chunk in chunks:
+            output_file.write(chunk)
 
 
 def echo_workflow(workflow):

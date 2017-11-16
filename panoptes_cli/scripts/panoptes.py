@@ -6,12 +6,19 @@ from panoptes_client import Panoptes
 
 @click.version_option(prog_name='Panoptes CLI')
 @click.group()
-@click.option('--endpoint', '-e', type=str)
+@click.option(
+    '--endpoint',
+    '-e',
+    help="Overides the default API endpoint",
+    type=str,
+)
 @click.option(
     '--admin',
     '-a',
-    help=("Enable admin mode. Ignored if you're not logged in as an "
-          "administrator."),
+    help=(
+        "Enables admin mode. Ignored if you're not logged in as an "
+        "administrator."
+    ),
     is_flag=True,
 )
 @click.pass_context
