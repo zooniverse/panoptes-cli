@@ -1,3 +1,14 @@
+## 1.0 (2017-11-16)
+
+- New: Add --version option
+- New: Add info command
+- New: Add help text for all commands
+- New: Add progress bars for data export downloads
+- Fix: Modifying project public/private status
+- Remove non-functional `--project-id` option from `subject-set modify`
+- Rename `workflow download` to `workflow download-classifications`
+- Rely on API to validate file types
+
 ## 0.8 (2017-08-04)
 
 - New: Set default endpoint to www.zooniverse.org
