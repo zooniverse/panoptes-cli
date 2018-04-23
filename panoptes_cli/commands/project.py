@@ -123,7 +123,7 @@ def create(display_name, description, primary_language, public):
     '--public/--private',
     '-p/-P',
     help="Sets the project to be public or private.",
-    is_flag=True
+    default=None,
 )
 def modify(project_id, display_name, description, primary_language, public):
     """
