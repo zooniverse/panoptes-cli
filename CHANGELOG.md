@@ -1,3 +1,7 @@
+## 1.0.1 (2018-04-27)
+
+- Fix: Modifying projects makes them private
+
 ## 1.0 (2017-11-16)
 
 - New: Add --version option
