@@ -3,12 +3,14 @@ import csv
 import os
 import re
 import sys
+import time
 
 from panoptes_cli.scripts.panoptes import cli
 from panoptes_client import SubjectSet
 from panoptes_client.panoptes import PanoptesAPIException
 
 LINK_BATCH_SIZE = 10
+MAX_PENDING_SUBJECTS = 50
 
 
 @cli.group(name='subject-set')
@@ -191,40 +193,42 @@ def upload_subjects(
                 subject_rows.append((files, metadata))
 
     created_subjects = []
+    pending_subjects = []
+
+    def move_created(limit):
+        while len(pending_subjects) > limit:
+            for subject in pending_subjects:
+                if subject.async_save_result():
+                    created_subjects.append(subject)
+                    pending_subjects.remove(subject)
+            time.sleep(0.5)
+
+    def link_created(limit):
+        if len(created_subjects) > limit:
+            subject_set.add(created_subjects)
+            del created_subjects[:]
+
     with click.progressbar(
         enumerate(subject_rows),
         length=len(subject_rows),
         label='Uploading subjects',
     ) as _subject_rows:
-        for count, (files, metadata) in _subject_rows:
-            subject = Subject()
-            subject.links.project = subject_set.links.project
-            for media_file in files:
-                subject.add_location(media_file)
-            subject.metadata.update(metadata)
-            try:
+        with Subject.async_saves():
+            for count, (files, metadata) in _subject_rows:
+                subject = Subject()
+                subject.links.project = subject_set.links.project
+                for media_file in files:
+                    subject.add_location(media_file)
+                subject.metadata.update(metadata)
                 subject.save()
-            except PanoptesAPIException as e:
-                click.echo(
-                    (
-                        "\nError: Could not save subject in row {}\n"
-                        "The API returned error: {}"
-                    ).format(
-                        count + 2,
-                        e,
-                    ),
-                    err=True,
-                )
-                sys.exit(1)
 
-            created_subjects.append(subject)
+                pending_subjects.append(subject)
 
-            if (count + 1) % LINK_BATCH_SIZE == 0:
-                subject_set.add(created_subjects)
-                created_subjects = []
+                move_created(MAX_PENDING_SUBJECTS)
+                link_created(LINK_BATCH_SIZE)
 
-        if len(created_subjects) > 0:
-            subject_set.add(created_subjects)
+        move_created(0)
+        link_created(0)
 
 
 @subject_set.command(name='add-subjects')
