@@ -164,7 +164,54 @@ def upload_subjects(
 
     Any local files will still be detected and uploaded.
     """
+    subject_set_upload(
+        subject_set_id,
+        manifest_files,
+        allow_missing,
+        remote_location,
+        mime_type
+    )
 
+@subject_set.command(name='add-subjects')
+@click.argument('subject-set-id', required=True, type=int)
+@click.argument('subject-ids', required=True, nargs=-1)
+def add_subjects(subject_set_id, subject_ids):
+    """
+    Links existing subjects to this subject set.
+
+    This command is useful mainly for adding previously uploaded subjects to
+    additional subject sets.
+
+    See the upload-subjects command to create new subjects in a subject set.
+    """
+    s = SubjectSet.find(subject_set_id)
+    s.add(subject_ids)
+
+
+@subject_set.command(name='remove-subjects')
+@click.argument('subject-set-id', required=True, type=int)
+@click.argument('subject-ids', required=True, nargs=-1)
+def remove_subjects(subject_set_id, subject_ids):
+    """
+    Unlinks subjects from this subject set.
+
+    The subjects themselves are not deleted or modified in any way and will
+    still be present in any other sets they're linked to.
+    """
+
+    s = SubjectSet.find(subject_set_id)
+    s.remove(subject_ids)
+
+
+def echo_subject_set(subject_set):
+    click.echo(
+        u'{} {}'.format(
+            subject_set.id,
+            subject_set.display_name
+        )
+    )
+
+def subject_set_upload(subject_set_id,manifest_files,allow_missing,remote_location,mime_type):
     subject_set = SubjectSet.find(subject_set_id)
     subject_rows = []
     for manifest_file in manifest_files:
@@ -230,44 +277,5 @@ def upload_subjects(
         move_created(0)
         link_created(0)
 
-
-@subject_set.command(name='add-subjects')
-@click.argument('subject-set-id', required=True, type=int)
-@click.argument('subject-ids', required=True, nargs=-1)
-def add_subjects(subject_set_id, subject_ids):
-    """
-    Links existing subjects to this subject set.
-
-    This command is useful mainly for adding previously uploaded subjects to
-    additional subject sets.
-
-    See the upload-subjects command to create new subjects in a subject set.
-    """
-    s = SubjectSet.find(subject_set_id)
-    s.add(subject_ids)
-
-
-@subject_set.command(name='remove-subjects')
-@click.argument('subject-set-id', required=True, type=int)
-@click.argument('subject-ids', required=True, nargs=-1)
-def remove_subjects(subject_set_id, subject_ids):
-    """
-    Unlinks subjects from this subject set.
-
-    The subjects themselves are not deleted or modified in any way and will
-    still be present in any other sets they're linked to.
-    """
-
-    s = SubjectSet.find(subject_set_id)
-    s.remove(subject_ids)
-
-
-def echo_subject_set(subject_set):
-    click.echo(
-        u'{} {}'.format(
-            subject_set.id,
-            subject_set.display_name
-        )
-    )
 
 from panoptes_client import Subject
