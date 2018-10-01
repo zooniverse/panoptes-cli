@@ -198,7 +198,7 @@ def upload_subjects(
     def move_created(limit):
         while len(pending_subjects) > limit:
             for subject in pending_subjects:
-                if subject.async_save_result():
+                if subject.async_save_result:
                     created_subjects.append(subject)
                     pending_subjects.remove(subject)
             time.sleep(0.5)
