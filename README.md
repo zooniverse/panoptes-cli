@@ -233,3 +233,10 @@ $ panoptes subject-set ls -p 2797
 ```
 $ panoptes subject-set ls -p 2797 4667
 ```
+
+### Add known subjects to a subject set
+
+```
+# for known subjects with ids 3, 2, 1 and subject set with id 999
+$ panoptes subject-set add-subjects 999 3 2 1
+```
