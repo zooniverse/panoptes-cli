@@ -233,3 +233,10 @@ $ panoptes subject-set ls -p 2797
 ```
 $ panoptes subject-set ls -p 2797 4667
 ```
+
+## Debugging
+
+To view the various requests as sent to the Panoptes API as well as other info,
+include the env var `PANOPTES_DEBUG=true` before your command, like so:
+
+`PANOPTES_DEBUG=true panoptes workflow ls -p 1234`
