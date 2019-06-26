@@ -1,3 +1,7 @@
+## 1.0.2 (2019-02-20)
+
+- Update pyyaml requirement to >=3.12,<4.2
+
 ## 1.0.1 (2018-04-27)
 
 - Fix: Modifying projects makes them private
