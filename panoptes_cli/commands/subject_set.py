@@ -191,6 +191,12 @@ def upload_subjects(
                     else:
                         continue
                 subject_rows.append((files, metadata))
+            else:
+                click.echo(
+                    'File {} did not contain any rows.'.format(manifest_file),
+                    err=True,
+                )
+                return -1
 
     created_subjects = []
     pending_subjects = []
