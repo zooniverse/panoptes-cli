@@ -120,10 +120,19 @@ def deactivate(workflow_id):
 @workflow.command(name="download-classifications")
 @click.argument('workflow-id', required=True, type=int)
 @click.argument('output-file', required=True, type=click.File('wb'))
-@click.option('--generate', '-g', is_flag=True)
+@click.option(
+    '--generate',
+    '-g',
+    help="Generates a new export before downloading.",
+    is_flag=True
+)
 @click.option(
     '--generate-timeout',
     '-T',
+    help=(
+        "Time in seconds to wait for new export to be ready. Defaults to "
+        "unlimited. Has no effect unless --generate is given."
+    ),
     required=False,
     type=int,
 )
