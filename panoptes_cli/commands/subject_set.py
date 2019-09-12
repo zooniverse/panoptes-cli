@@ -177,7 +177,7 @@ def upload_subjects(
                 files = []
                 for col in row:
                     file_path = os.path.join(file_root, col)
-                    if os.path.exists(file_path):
+                    if os.path.isfile(file_path):
                         files.append(file_path)
 
                 for field_number in remote_location:
