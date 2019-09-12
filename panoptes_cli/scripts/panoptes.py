@@ -40,12 +40,13 @@ def cli(ctx, endpoint, admin):
     if endpoint:
         ctx.config['endpoint'] = endpoint
 
-    Panoptes.connect(
-        endpoint=ctx.config['endpoint'],
-        username=ctx.config['username'],
-        password=ctx.config['password'],
-        admin=admin,
-    )
+    if ctx.invoked_subcommand != 'configure':
+        Panoptes.connect(
+            endpoint=ctx.config['endpoint'],
+            username=ctx.config['username'],
+            password=ctx.config['password'],
+            admin=admin,
+        )
 
 from panoptes_cli.commands.configure import *
 from panoptes_cli.commands.info import *
