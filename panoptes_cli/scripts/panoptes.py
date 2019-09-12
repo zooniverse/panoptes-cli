@@ -33,7 +33,7 @@ def cli(ctx, endpoint, admin):
 
     try:
         with open(ctx.config_file) as conf_f:
-            ctx.config.update(yaml.load(conf_f))
+            ctx.config.update(yaml.full_load(conf_f))
     except IOError:
         pass
 
