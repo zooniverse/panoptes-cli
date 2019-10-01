@@ -239,8 +239,16 @@ def upload_subjects(
 
 @subject_set.command(name='add-subjects')
 @click.argument('subject-set-id', required=True, type=int)
-@click.argument('subject-ids', required=True, nargs=-1)
-def add_subjects(subject_set_id, subject_ids):
+@click.argument('subject-ids', required=False, nargs=-1)
+@click.option(
+    '--id-file',
+    '-f',
+    type=click.File('r'),
+    help=(
+        "Specify a filename which contains a list of subject IDs, one per line."
+    ),
+)
+def add_subjects(subject_set_id, subject_ids, id_file):
     """
     Links existing subjects to this subject set.
 
@@ -250,13 +258,24 @@ def add_subjects(subject_set_id, subject_ids):
     See the upload-subjects command to create new subjects in a subject set.
     """
     s = SubjectSet.find(subject_set_id)
-    s.add(subject_ids)
+    if id_file:
+        s.add([l.strip() for l in id_file.readlines()])
+    if subject_ids:
+        s.add(subject_ids)
 
 
 @subject_set.command(name='remove-subjects')
 @click.argument('subject-set-id', required=True, type=int)
-@click.argument('subject-ids', required=True, nargs=-1)
-def remove_subjects(subject_set_id, subject_ids):
+@click.argument('subject-ids', required=False, nargs=-1)
+@click.option(
+    '--id-file',
+    '-f',
+    type=click.File('r'),
+    help=(
+        "Specify a filename which contains a list of subject IDs, one per line."
+    ),
+)
+def remove_subjects(subject_set_id, subject_ids, id_file):
     """
     Unlinks subjects from this subject set.
 
@@ -265,7 +284,10 @@ def remove_subjects(subject_set_id, subject_ids):
     """
 
     s = SubjectSet.find(subject_set_id)
-    s.remove(subject_ids)
+    if id_file:
+        s.remove([l.strip() for l in id_file.readlines()])
+    if subject_ids:
+        s.remove(subject_ids)
 
 
 def echo_subject_set(subject_set):
