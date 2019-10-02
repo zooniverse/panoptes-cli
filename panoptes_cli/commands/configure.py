@@ -13,9 +13,12 @@ def configure(ctx):
         os.mkdir(ctx.parent.config_dir)
 
     for opt, value in ctx.parent.config.items():
+        is_password = opt == 'password'
         ctx.parent.config[opt] = click.prompt(
             opt,
-            default=value
+            default=value,
+            hide_input=is_password,
+            show_default=not is_password,
         )
 
     with open(ctx.parent.config_file, 'w') as conf_f:
