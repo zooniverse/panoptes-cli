@@ -138,12 +138,25 @@ def modify(subject_set_id, display_name):
     required=False,
     default='image/png',
 )
+@click.option(
+    '--file-column',
+    '-f',
+    help=(
+        "Specify a field (by column number) in the manifest which contains a "
+        "local file to be uploaded. Can be used more than once. Disables auto-"
+        "detection of filename columns."
+    ),
+    multiple=True,
+    type=int,
+    required=False,
+)
 def upload_subjects(
     subject_set_id,
     manifest_files,
     allow_missing,
     remote_location,
     mime_type,
+    file_column,
 ):
     """
     Uploads subjects from each of the given MANIFEST_FILES.
@@ -153,7 +166,7 @@ def upload_subjects(
     $ panoptes subject-set upload-subjects 4667 manifest.csv
 
     Local filenames will be automatically detected in the manifest and
-    uploaded.
+    uploaded, or filename columns can be specified with --file-column.
 
     If you are hosting your media yourself, you can put the URLs in the
     manifest and specify the column number(s):
@@ -175,10 +188,29 @@ def upload_subjects(
             for row in r:
                 metadata = dict(zip(headers, row))
                 files = []
-                for col in row:
-                    file_path = os.path.join(file_root, col)
-                    if os.path.isfile(file_path):
-                        files.append(file_path)
+                if not file_column:
+                    file_column = []
+                    for field_number, col in enumerate(row, start=1):
+                        file_path = os.path.join(file_root, col)
+                        if os.path.isfile(file_path):
+                            files.append(file_path)
+                            file_column.append(field_number)
+                else:
+                    for field_number in file_column:
+                        file_path = os.path.join(
+                            file_root,
+                            row[field_number - 1]
+                        )
+                        if os.path.isfile(file_path):
+                            files.append(file_path)
+                        else:
+                            click.echo(
+                                'File "{}" could not be found'.format(
+                                    file_path,
+                                ),
+                                err=True,
+                            )
+                            return -1
 
                 for field_number in remote_location:
                     files.append({mime_type: row[field_number - 1]})
@@ -191,7 +223,8 @@ def upload_subjects(
                     else:
                         continue
                 subject_rows.append((files, metadata))
-            else:
+
+            if not subject_rows:
                 click.echo(
                     'File {} did not contain any rows.'.format(manifest_file),
                     err=True,
