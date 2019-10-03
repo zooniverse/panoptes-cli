@@ -10,6 +10,17 @@ services:
       - ${HOME}:${HOME}
     working_dir: ${PWD}
 
+  debug:
+    build:
+      context:  ./
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ${HOME}/.panoptes/:/root/.panoptes/
+      - ${HOME}:${HOME}
+    environment:
+      - PANOPTES_DEBUG=true
+    working_dir: ${PWD}
+
   stable:
     build:
       context: ./
@@ -26,6 +37,17 @@ services:
     volumes:
       - ${HOME}/.panoptes/:/root/.panoptes/
       - ${HOME}:${HOME}
+    working_dir: ${PWD}
+
+  debug2:
+    build:
+      context:  ./
+      dockerfile: Dockerfile.dev2
+    volumes:
+      - ${HOME}/.panoptes/:/root/.panoptes/
+      - ${HOME}:${HOME}
+    environment:
+      - PANOPTES_DEBUG=true
     working_dir: ${PWD}
 
   stable2:
