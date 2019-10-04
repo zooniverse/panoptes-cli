@@ -213,6 +213,29 @@ def download(project_id, output_file, generate, generate_timeout, data_type):
         for chunk in chunks:
             output_file.write(chunk)
 
+
+@project.command()
+@click.option(
+    '--force',
+    '-f',
+    is_flag=True,
+    help='Delete without asking for confirmation.',
+)
+@click.argument('project-ids', required=True, nargs=-1, type=int)
+def delete(force, project_ids):
+    for project_id in project_ids:
+        project = Project.find(project_id)
+        if not force:
+            click.confirm(
+                'Delete project {} ({})?'.format(
+                    project_id,
+                    project.display_name,
+                ),
+                abort=True,
+            )
+        project.delete()
+
+
 def echo_project(project):
     click.echo(
         u'{}{} {} {}'.format(

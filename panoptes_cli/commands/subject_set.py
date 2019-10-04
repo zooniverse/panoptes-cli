@@ -332,6 +332,28 @@ def remove_subjects(subject_set_id, subject_ids, id_file):
         s.remove(subject_ids)
 
 
+@subject_set.command()
+@click.option(
+    '--force',
+    '-f',
+    is_flag=True,
+    help='Delete without asking for confirmation.',
+)
+@click.argument('subject-set-ids', required=True, nargs=-1, type=int)
+def delete(force, subject_set_ids):
+    for subject_set_id in subject_set_ids:
+        subject_set = SubjectSet.find(subject_set_id)
+        if not force:
+            click.confirm(
+                'Delete subject set {} ({})?'.format(
+                    subject_set_id,
+                    subject_set.display_name,
+                ),
+                abort=True,
+            )
+        subject_set.delete()
+
+
 def echo_subject_set(subject_set):
     click.echo(
         u'{} {}'.format(
@@ -339,5 +361,6 @@ def echo_subject_set(subject_set):
             subject_set.display_name
         )
     )
+
 
 from panoptes_client import Subject

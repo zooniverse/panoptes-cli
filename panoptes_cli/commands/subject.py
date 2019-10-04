@@ -48,6 +48,28 @@ def ls(subject_set_id, quiet, subject_ids):
             echo_subject(subject)
 
 
+@subject.command()
+@click.argument('subject-id', required=True)
+def info(subject_id):
+    subject = Subject.find(subject_id)
+    click.echo(yaml.dump(subject.raw))
+
+
+@subject.command()
+@click.option(
+    '--force',
+    '-f',
+    is_flag=True,
+    help='Delete without asking for confirmation.',
+)
+@click.argument('subject-ids', required=True, nargs=-1, type=int)
+def delete(force, subject_ids):
+    for subject_id in subject_ids:
+        if not force:
+            click.confirm('Delete subject {}?'.format(subject_id), abort=True)
+        Subject.find(subject_id).delete()
+
+
 def echo_subject(subject):
     click.echo(
         u'{} {}'.format(
@@ -55,10 +77,3 @@ def echo_subject(subject):
             ' '.join(map(lambda l: list(l.values())[0], subject.locations))
         )
     )
-
-
-@subject.command()
-@click.argument('subject-id', required=True)
-def info(subject_id):
-    subject = Subject.find(subject_id)
-    click.echo(yaml.dump(subject.raw))
