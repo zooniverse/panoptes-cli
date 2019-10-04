@@ -6,6 +6,7 @@ import time
 import yaml
 
 import click
+import humanize
 
 from panoptes_cli.scripts.panoptes import cli
 from panoptes_client import SubjectSet
@@ -13,6 +14,7 @@ from panoptes_client.panoptes import PanoptesAPIException
 
 LINK_BATCH_SIZE = 10
 MAX_PENDING_SUBJECTS = 50
+MAX_UPLOAD_FILE_SIZE = 1024 * 1024
 
 
 @cli.group(name='subject-set')
@@ -187,6 +189,37 @@ def upload_subjects(
     Any local files will still be detected and uploaded.
     """
 
+    def validate_file(file_path):
+        if not os.path.isfile(file_path):
+            click.echo(
+                'Error: File "{}" could not be found.'.format(
+                    file_path,
+                ),
+                err=True,
+            )
+            return False
+
+        file_size = os.path.getsize(file_path)
+        if file_size == 0:
+            click.echo(
+                'Error: File "{}" is empty.'.format(
+                    file_path,
+                ),
+                err=True,
+            )
+            return False
+        elif file_size > MAX_UPLOAD_FILE_SIZE:
+            click.echo(
+                'Error: File "{}" is {}, larger than the maximum {}.'.format(
+                    file_path,
+                    humanize.naturalsize(file_size),
+                    humanize.naturalsize(MAX_UPLOAD_FILE_SIZE),
+                ),
+                err=True,
+            )
+            return False
+        return True
+
     subject_set = SubjectSet.find(subject_set_id)
     subject_rows = []
     for manifest_file in manifest_files:
@@ -201,25 +234,20 @@ def upload_subjects(
                     file_column = []
                     for field_number, col in enumerate(row, start=1):
                         file_path = os.path.join(file_root, col)
-                        if os.path.isfile(file_path):
-                            files.append(file_path)
+                        if os.path.exists(file_path):
                             file_column.append(field_number)
+                            if not validate_file(file_path):
+                                return -1
+                            files.append(file_path)
                 else:
                     for field_number in file_column:
                         file_path = os.path.join(
                             file_root,
                             row[field_number - 1]
                         )
-                        if os.path.isfile(file_path):
-                            files.append(file_path)
-                        else:
-                            click.echo(
-                                'File "{}" could not be found'.format(
-                                    file_path,
-                                ),
-                                err=True,
-                            )
+                        if not validate_file(file_path):
                             return -1
+                        files.append(file_path)
 
                 for field_number in remote_location:
                     files.append({mime_type: row[field_number - 1]})

@@ -15,6 +15,7 @@ setup(
         'Click>=6.7,<7.1',
         'PyYAML>=3.12,<5.2',
         'panoptes-client>=1.0,<2.0',
+        'humanize>=0.5.1,<0.6',
     ],
     entry_points='''
         [console_scripts]
