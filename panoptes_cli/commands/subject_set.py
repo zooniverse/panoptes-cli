@@ -1,9 +1,11 @@
-import click
 import csv
 import os
 import re
 import sys
 import time
+import yaml
+
+import click
 
 from panoptes_cli.scripts.panoptes import cli
 from panoptes_client import SubjectSet
@@ -67,6 +69,13 @@ def ls(subject_set_id, project_id, workflow_id, quiet):
     else:
         for subject_set in subject_sets:
             echo_subject_set(subject_set)
+
+
+@subject_set.command()
+@click.argument('subject-set-id', required=True)
+def info(subject_set_id):
+    subject_set = SubjectSet.find(subject_set_id)
+    click.echo(yaml.dump(subject_set.raw))
 
 
 @subject_set.command()

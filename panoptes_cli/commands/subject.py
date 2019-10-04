@@ -1,3 +1,5 @@
+import yaml
+
 import click
 
 from panoptes_cli.scripts.panoptes import cli
@@ -53,3 +55,10 @@ def echo_subject(subject):
             ' '.join(map(lambda l: list(l.values())[0], subject.locations))
         )
     )
+
+
+@subject.command()
+@click.argument('subject-id', required=True)
+def info(subject_id):
+    subject = Subject.find(subject_id)
+    click.echo(yaml.dump(subject.raw))

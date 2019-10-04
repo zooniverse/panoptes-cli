@@ -1,3 +1,5 @@
+import yaml
+
 import click
 
 from panoptes_cli.scripts.panoptes import cli
@@ -48,6 +50,13 @@ def ls(workflow_id, project_id, quiet):
     else:
         for workflow in workflows:
             echo_workflow(workflow)
+
+
+@workflow.command()
+@click.argument('workflow-id', required=True)
+def info(workflow_id):
+    workflow = Workflow.find(workflow_id)
+    click.echo(yaml.dump(workflow.raw))
 
 
 @workflow.command(name='retire-subjects')
