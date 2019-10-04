@@ -179,6 +179,28 @@ def download_classifications(
             output_file.write(chunk)
 
 
+@workflow.command()
+@click.option(
+    '--force',
+    '-f',
+    is_flag=True,
+    help='Delete without asking for confirmation.',
+)
+@click.argument('workflow-ids', required=True, nargs=-1, type=int)
+def delete(force, workflow_ids):
+    for workflow_id in workflow_ids:
+        workflow = Workflow.find(workflow_id)
+        if not force:
+            click.confirm(
+                'Delete workflow {} ({})?'.format(
+                    workflow_id,
+                    workflow.display_name,
+                ),
+                abort=True,
+            )
+        workflow.delete()
+
+
 def echo_workflow(workflow):
     click.echo(
         u'{} {}'.format(
