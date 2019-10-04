@@ -1,3 +1,5 @@
+import yaml
+
 import click
 
 from panoptes_cli.scripts.panoptes import cli
@@ -68,6 +70,14 @@ def ls(project_id, display_name, launch_approved, slug, quiet, search):
     else:
         for project in projects:
             echo_project(project)
+
+
+@project.command()
+@click.argument('project-id', required=True)
+def info(project_id):
+    project = Project.find(project_id)
+    click.echo(yaml.dump(project.raw))
+
 
 @project.command()
 @click.argument('display-name', required=True)
