@@ -142,12 +142,15 @@ def modify(subject_set_id, display_name):
     '--mime-type',
     '-m',
     help=(
-        "MIME type for remote media. Defaults to image/png. Has no effect "
-        "without --remote-location."
+        "MIME type for remote media. Defaults to image/png. Can be used more "
+        "than once, in which case types are mapped one to one with remote "
+        "locations in the order they are given. Has no effect without "
+        "--remote-location."
     ),
     type=str,
     required=False,
-    default='image/png',
+    default=('image/png',),
+    multiple=True
 )
 @click.option(
     '--file-column',
@@ -188,6 +191,18 @@ def upload_subjects(
 
     Any local files will still be detected and uploaded.
     """
+
+    remote_location_count = len(remote_location)
+    mime_type_count = len(mime_type)
+    if remote_location_count > 1 and mime_type_count == 1:
+        mime_type = mime_type * remote_location_count
+    elif remote_location_count > 0 and mime_type_count != remote_location_count:
+        click.echo(
+            'Error: The number of MIME types given must be either 1 or equal '
+            'to the number of remote locations.',
+            err=True,
+        )
+        return -1
 
     def validate_file(file_path):
         if not os.path.isfile(file_path):
@@ -249,8 +264,8 @@ def upload_subjects(
                             return -1
                         files.append(file_path)
 
-                for field_number in remote_location:
-                    files.append({mime_type: row[field_number - 1]})
+                for field_number, _mime_type in zip(remote_location, mime_type):
+                    files.append({_mime_type: row[field_number - 1]})
 
                 if len(files) == 0:
                     click.echo('Could not find any files in row:', err=True)
