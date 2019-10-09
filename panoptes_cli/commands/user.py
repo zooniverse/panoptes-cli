@@ -47,7 +47,7 @@ def info(user_id, email, login):
             user = next(User.where(email=email))
         except StopIteration:
             user = None
-        if getattr(user, email, '') != email:
+        if getattr(user, 'email', '') != email:
             click.echo('User not found', err=True)
             return -1
     else:
@@ -57,7 +57,7 @@ def info(user_id, email, login):
             user = next(User.where(login=login))
         except StopIteration:
             user = None
-        if getattr(user, login, '') != login:
+        if getattr(user, 'login', '') != login:
             click.echo('User not found', err=True)
             return -1
     click.echo(yaml.dump(user.raw))
