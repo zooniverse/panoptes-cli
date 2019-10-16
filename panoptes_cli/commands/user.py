@@ -84,3 +84,13 @@ def delete(force, user_ids):
                 user.login,
             ), abort=True)
         user.delete()
+
+
+@user.command()
+def token():
+    """
+    Returns the current oauth token and its expiration date.
+    """
+
+    click.echo("Token: {}".format(Panoptes.client().get_bearer_token()))
+    click.echo("Expiry time: {}".format(Panoptes.client().bearer_expires))
