@@ -1,6 +1,9 @@
-import click
 import os
+
+import click
+import keyring
 import yaml
+
 from panoptes_client import Panoptes
 
 
@@ -28,7 +31,6 @@ def cli(ctx, endpoint, admin):
     ctx.config = {
         'endpoint': 'https://www.zooniverse.org',
         'username': '',
-        'password': '',
     }
 
     try:
@@ -41,10 +43,44 @@ def cli(ctx, endpoint, admin):
         ctx.config['endpoint'] = endpoint
 
     if ctx.invoked_subcommand != 'configure':
+        try:
+            password = keyring.get_password('panoptes', ctx.config['username'])
+        except RuntimeError:
+            password = None
+
+        if 'password' in ctx.config:
+            if not password:
+                try:
+                    password = ctx.config['password']
+                    keyring.set_password(
+                        'panoptes',
+                        ctx.config['username'],
+                        password,
+                    )
+                    retrieved_password = keyring.get_password(
+                        'panoptes', 
+                        ctx.config['username'],
+                    )
+
+                    del ctx.config['password']
+                    save_config(ctx.config_file, ctx.config)
+                except RuntimeError:
+                    click.echo(
+                        'Warning: Your password is stored insecurely and '
+                        'secure keyrings are not supported on your system.',
+                        err=True,
+                    )
+
+        if not password:
+            password = click.prompt(
+                'Password for {}'.format(ctx.config['username']),
+                hide_input=True,
+            )
+
         Panoptes.connect(
             endpoint=ctx.config['endpoint'],
             username=ctx.config['username'],
-            password=ctx.config['password'],
+            password=password,
             admin=admin,
         )
 

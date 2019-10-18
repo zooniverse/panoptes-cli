@@ -1,8 +1,7 @@
-FROM python:2.7-alpine
+FROM python:2.7
 
 WORKDIR /usr/src/panoptes-cli
 
-RUN apk --no-cache add git
 RUN pip install git+git://github.com/zooniverse/panoptes-python-client.git
 
 COPY . .

@@ -1,5 +1,7 @@
-import click
 import os
+
+import click
+import keyring
 import yaml
 
 from panoptes_cli.scripts.panoptes import cli
@@ -25,12 +27,9 @@ def configure(ctx, edit_all):
         if opt == 'endpoint' and not edit_all:
             continue
 
-        is_password = opt == 'password'
         ctx.parent.config[opt] = click.prompt(
             opt,
             default=value,
-            hide_input=is_password,
-            show_default=not is_password,
         )
 
     if not ctx.parent.config['endpoint'].startswith('https://'):
@@ -38,6 +37,30 @@ def configure(ctx, edit_all):
             'Error: Invalid endpoint supplied. Endpoint must be an HTTPS URL.'
         )
         return -1
+    
+    new_password = click.prompt(
+        'Password [leave blank for no change]',
+        hide_input=True,
+        show_default=False,
+        default='',
+    )
+    if new_password:
+        try:
+            keyring.set_password(
+                'panoptes',
+                ctx.parent.config['username'],
+                new_password,
+            )
+        except RuntimeError:
+            click.echo(
+                'Warning: Could not save your password to the keyring. '
+                'You will be asked for your password each time.',
+                err=True,
+            )
 
-    with open(ctx.parent.config_file, 'w') as conf_f:
-        yaml.dump(ctx.parent.config, conf_f, default_flow_style=False)
+    save_config(ctx.parent.config_file, ctx.parent.config)
+
+
+def save_config(config_file, config):
+    with open(config_file, 'w') as conf_f:
+        yaml.dump(config, conf_f, default_flow_style=False)

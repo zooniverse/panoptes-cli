@@ -17,6 +17,7 @@ setup(
         'panoptes-client>=1.0,<2.0',
         'humanize>=0.5.1,<0.6',
         'pathvalidate>=0.29.0,<0.30',
+        'keyring>=19.2,<19.3',
     ],
     entry_points='''
         [console_scripts]
