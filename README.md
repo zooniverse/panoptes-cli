@@ -58,11 +58,12 @@ Options:
   --help               Show this message and exit.
 
 Commands:
-  configure    Sets default values for configuration...
-  info         Displays version and environment information...
+  configure    Sets default values for configuration options.
+  info         Displays version and environment information for debugging.
   project      Contains commands for managing projects.
-  subject      Contains commands for retrieving information...
+  subject      Contains commands for retrieving information about subjects.
   subject-set  Contains commands for managing subject sets.
+  user         Contains commands for retrieving information about users.
   workflow     Contains commands for managing workflows.
 ```
 
@@ -77,14 +78,17 @@ Options:
 
 Commands:
   create    Creates a new project.
+  delete
   download  Downloads project-level data exports.
+  info
   ls        Lists project IDs and names.
-  modify    Changes the attributes of an existing...
+  modify    Changes the attributes of an existing project..
 ```
 
 ```
 $ panoptes subject-set upload-subjects --help
-Usage: panoptes subject-set upload-subjects [OPTIONS] SUBJECT_SET_ID MANIFEST_FILES...
+Usage: panoptes subject-set upload-subjects [OPTIONS] SUBJECT_SET_ID
+                                            MANIFEST_FILES...
 
   Uploads subjects from each of the given MANIFEST_FILES.
 
@@ -93,7 +97,7 @@ Usage: panoptes subject-set upload-subjects [OPTIONS] SUBJECT_SET_ID MANIFEST_FI
   $ panoptes subject-set upload-subjects 4667 manifest.csv
 
   Local filenames will be automatically detected in the manifest and
-  uploaded.
+  uploaded, or filename columns can be specified with --file-column.
 
   If you are hosting your media yourself, you can put the URLs in the
   manifest and specify the column number(s):
@@ -111,8 +115,14 @@ Options:
                                  manifest which contains a URL to a remote
                                  media location. Can be used more than once.
   -m, --mime-type TEXT           MIME type for remote media. Defaults to
-                                 image/png. Has no effect without --remote-
-                                 location.
+                                 image/png. Can be used more than once, in
+                                 which case types are mapped one to one with
+                                 remote locations in the order they are given.
+                                 Has no effect without --remote-location.
+  -f, --file-column INTEGER      Specify a field (by column number) in the
+                                 manifest which contains a local file to be
+                                 uploaded. Can be used more than once.
+                                 Disables auto-detection of filename columns.
   --help                         Show this message and exit.
 ```
 
@@ -142,8 +152,7 @@ commands and their options, use the built in help as described above.
 ```
 $ panoptes configure
 username []:
-password []:
-endpoint [https://www.zooniverse.org]:
+password:
 ```
 
 Press enter without typing anything to keep the current value (shown in
