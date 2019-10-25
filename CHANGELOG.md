@@ -1,5 +1,23 @@
-## 1.1 (2019-00-00)
+## 1.1 (2019-10-25)
 
+- New: Use multithreaded subject uploads
+- New: Add option to resume subject uploads on failure
+- New: Add ID file option to subject set add/remove
+- New: Add `--file-column` option to subject uploads
+- New: Add `info` commands for all objects
+- New: Add `delete` commands for all objects
+- New: Allow multiple remote MIME types
+- New: Add `user token` command
+- Fix: Do not connect to API during `configure`
+- Fix: Use `yaml.full_load` instead of `yaml.load`
+- Fix: Use `os.path.isfile` instead of `exists`
+- Add help text to `workflow download-classifications`
+- Abort uploads if manifest doesn't contain any rows
+- Don't show password in configure command
+- Validate endpoint config
+- Validate file sizes before uploading
+- Update pyyaml requirement to >=3.12,<5.2
+- Update click requirement to >=6.7,<7.1
 
 ## 1.0.2 (2019-02-20)
 
