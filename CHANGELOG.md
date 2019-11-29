@@ -1,3 +1,7 @@
+## 1.1.1 (2019-11-29)
+
+- Fix: Bump pyyaml requirement to >=5.1 to fix AttributeError
+
 ## 1.1 (2019-10-25)
 
 - New: Use multithreaded subject uploads
