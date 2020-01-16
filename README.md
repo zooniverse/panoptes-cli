@@ -198,6 +198,16 @@ $ panoptes subject-set upload-subjects -m image/jpeg -r 1 4667 manifest.csv
 $ panoptes subject-set upload-subjects -r 1 -r 2 4667 manifest.csv
 ```
 
+A manifest can contain the media files to upload (one per column)
+and any other column is recorded as subject metadata, where the column name is the key and the row/column entry is the value, for example:
+
+file_name_1 | file_name_2 | metadata | metadata_hidden_from_classification | metadata_hidden_from_all
+-- | -- | -- | -- | --
+local_image_file_1.jpeg | local_image_file_2.jpeg | image_01 | !giraffe | #kenya_site_1
+
+
+
+
 ### Generate and download a classifications export
 
 ```
