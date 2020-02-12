@@ -300,7 +300,7 @@ def upload_subjects(
         for manifest_file in upload_state['manifest_files']:
             with open(manifest_file, 'U') as manifest_f:
                 file_root = os.path.dirname(manifest_file)
-                r = csv.reader(manifest_f)
+                r = csv.reader(manifest_f, skipinitialspace=True)
                 headers = next(r)
                 for row in r:
                     metadata = dict(zip(headers, row))
