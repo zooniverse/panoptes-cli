@@ -94,7 +94,13 @@ def info(project_id):
     help="Makes the project publically accessible.",
     is_flag=True
 )
-def create(display_name, description, primary_language, public):
+@click.option(
+    '--quiet',
+    '-q',
+    help='Only print project ID (omit name).',
+    is_flag=True,
+)
+def create(display_name, description, primary_language, public, quiet):
     """
     Creates a new project.
 
@@ -107,7 +113,11 @@ def create(display_name, description, primary_language, public):
     project.primary_language = primary_language
     project.private = not public
     project.save()
-    echo_project(project)
+
+    if quiet:
+        click.echo(project.id)
+    else:
+        echo_project(project)
 
 @project.command()
 @click.argument('project-id', required=True, type=int)
