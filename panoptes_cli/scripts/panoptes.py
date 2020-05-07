@@ -1,6 +1,8 @@
 import click
 import os
 import yaml
+import sys
+
 from panoptes_client import Panoptes
 
 
@@ -55,3 +57,6 @@ from panoptes_cli.commands.subject import *
 from panoptes_cli.commands.subject_set import *
 from panoptes_cli.commands.user import *
 from panoptes_cli.commands.workflow import *
+
+if getattr(sys, 'frozen', False):
+    cli(sys.argv[1:])
