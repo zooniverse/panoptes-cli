@@ -1,3 +1,8 @@
+## 1.1.2 (2020-05-07)
+
+- Bump pyyaml to <5.4
+- Bump humanize to <1.1
+
 ## 1.1.1 (2019-11-29)
 
 - Fix: Bump pyyaml requirement to >=5.1 to fix AttributeError
