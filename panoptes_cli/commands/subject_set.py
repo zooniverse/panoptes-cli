@@ -85,9 +85,15 @@ def info(subject_set_id):
 
 
 @subject_set.command()
+@click.option(
+    '--quiet',
+    '-q',
+    help='Only print subject set ID (omit name).',
+    is_flag=True,
+)
 @click.argument('project-id', required=True, type=int)
 @click.argument('display-name', required=True)
-def create(project_id, display_name):
+def create(quiet, project_id, display_name):
     """
     Creates a new subject set.
 
@@ -98,7 +104,11 @@ def create(project_id, display_name):
     subject_set.links.project = project_id
     subject_set.display_name = display_name
     subject_set.save()
-    echo_subject_set(subject_set)
+
+    if quiet:
+        click.echo(subject_set.id)
+    else:
+        echo_subject_set(subject_set)
 
 
 @subject_set.command()
@@ -300,7 +310,7 @@ def upload_subjects(
         for manifest_file in upload_state['manifest_files']:
             with open(manifest_file, 'U') as manifest_f:
                 file_root = os.path.dirname(manifest_file)
-                r = csv.reader(manifest_f)
+                r = csv.reader(manifest_f, skipinitialspace=True)
                 headers = next(r)
                 for row in r:
                     metadata = dict(zip(headers, row))
