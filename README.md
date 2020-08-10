@@ -205,8 +205,25 @@ file_name_1 | file_name_2 | metadata | !metadata_hidden_from_classification | #m
 -- | -- | -- | -- | --
 local_image_file_1.jpeg | local_image_file_2.jpeg | image_01 | giraffe | kenya_site_1
 
+### Resuming a failed upload
 
+If an upload fails for any reason, the CLI should detect the failure and give you the option of resuming the upload at a later time:
 
+```
+$ panoptes subject-set upload-subjects -m image/jpeg -r 1 4667 manifest.csv 
+Uploading subjects  [------------------------------------]    0%  00:41:05
+Error: Upload failed.
+Would you like to save the upload state to resume the upload later? [Y/n]: y
+Enter filename to save to [panoptes-upload-4667.yaml]: 
+```
+
+This will save a new manifest file which you can use to resume the upload. The new manifest file will be in YAML format rather than CSV, and the YAML file contains all the information about the original upload (including any command-line options you specified) along with a list of the subjects which have not yet been uploaded.
+
+To resume the upload, simply run the `upload-subjects` command specifying the same subject set ID with the new manifest file. Note that you do not need to include any other options that you originally specified (such as `-r`, `-m`, and so on):
+
+```
+$ panoptes subject-set upload-subjects 4667 panoptes-upload-4667.yaml
+```
 
 ### Generate and download a classifications export
 
