@@ -318,23 +318,27 @@ def upload_subjects(
                     if not upload_state['file_column']:
                         upload_state['file_column'] = []
                         for field_number, col in enumerate(row, start=1):
+                            if not col:
+                                continue
+
                             file_path = os.path.join(file_root, col)
                             if os.path.exists(file_path):
                                 upload_state['file_column'].append(
                                     field_number,
                                 )
-                                if not validate_file(file_path):
-                                    return -1
-                                files.append(file_path)
+                                if validate_file(file_path):
+                                    files.append(file_path)
                     else:
                         for field_number in upload_state['file_column']:
+                            if not row[field_number - 1]:
+                                continue
+
                             file_path = os.path.join(
                                 file_root,
                                 row[field_number - 1]
                             )
-                            if not validate_file(file_path):
-                                return -1
-                            files.append(file_path)
+                            if validate_file(file_path):
+                                files.append(file_path)
 
                     for field_number, _mime_type in zip(
                         upload_state['remote_location'],
