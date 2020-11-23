@@ -33,8 +33,10 @@ def configure(ctx, edit_all):
             show_default=not is_password,
         )
 
-    # If not connecting to local host (e.g. panoptes running locally) and endpoint is not https, refuse connection!
-    if 'localhost' not in ctx.parent.config['endpoint'] and not ctx.parent.config['endpoint'].startswith('https://'):
+    # If not connecting to local host (e.g. panoptes running locally) 
+    # and endpoint is not https, refuse connection!
+    if 'localhost' not in ctx.parent.config['endpoint'] \ 
+        and not ctx.parent.config['endpoint'].startswith('https://'):
         click.echo(
             'Error: Invalid endpoint supplied. Endpoint must be an HTTPS URL.'
         )
