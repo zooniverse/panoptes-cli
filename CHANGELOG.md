@@ -1,3 +1,7 @@
+## 1.1.3 (2020-12-10)
+
+- Update panoptes-client requirement to >=1.3
+
 ## 1.1.2 (2020-05-07)
 
 - Bump pyyaml to <5.4

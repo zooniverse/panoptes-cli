@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='panoptescli',
-    version='1.1.2',
+    version='1.1.3',
     url='https://github.com/zooniverse/panoptes-cli',
     author='Adam McMaster',
     author_email='adam@zooniverse.org',
