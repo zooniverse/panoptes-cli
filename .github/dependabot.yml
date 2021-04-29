@@ -1,0 +1,16 @@
+version: 2
+updates:
+- package-ecosystem: pip
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "10:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: humanize
+    versions:
+    - 3.2.0
+    - 3.3.0
+  - dependency-name: pathvalidate
+    versions:
+    - 2.3.0
