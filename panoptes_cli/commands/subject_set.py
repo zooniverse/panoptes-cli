@@ -304,6 +304,10 @@ def upload_subjects(
             return False
         return True
 
+    def get_index_fields(headers):
+        index_fields = [header.lstrip('%') for header in headers if header.startswith('%')]
+        return ",".join(str(field) for field in index_fields)
+
     subject_set = SubjectSet.find(upload_state['subject_set_id'])
     if not resumed_upload:
         subject_rows = []
@@ -312,8 +316,15 @@ def upload_subjects(
                 file_root = os.path.dirname(manifest_file)
                 r = csv.reader(manifest_f, skipinitialspace=True)
                 headers = next(r)
+                # update set metadata for indexed sets
+                index_fields = get_index_fields(headers)
+                if index_fields:
+                    subject_set.metadata['indexFields'] = index_fields
+                    subject_set.save()
+                # remove leading % from subject metadata headings
+                cleaned_headers = [header.lstrip('%') for header in headers]
                 for row in r:
-                    metadata = dict(zip(headers, row))
+                    metadata = dict(zip(cleaned_headers, row))
                     files = []
                     if not upload_state['file_column']:
                         upload_state['file_column'] = []
