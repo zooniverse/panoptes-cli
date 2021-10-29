@@ -315,11 +315,12 @@ def upload_subjects(
             parsed_headers.append(parsed_header)
 
         if len(index_fields) > 0:
-            subject_set.metadata['indexFields'] = ",".join(str(field) for field in index_fields)
+            joined_fields = ",".join(str(field) for field in index_fields)
+            subject_set.metadata['indexFields'] = joined_fields
             subject_set.save()
 
         return parsed_headers
-        
+
     subject_set = SubjectSet.find(upload_state['subject_set_id'])
     if not resumed_upload:
         subject_rows = []
