@@ -1,3 +1,7 @@
+## Unreleased
+
+- New: support `%` in manifest column headings for indexed subject sets
+
 ## 1.1.3 (2020-12-10)
 
 - Update panoptes-client requirement to >=1.3
