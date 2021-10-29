@@ -1,3 +1,7 @@
+## Unreleased
+
+- New: support `%` in manifest column headings for indexed subject sets. Manifest headers with the `%` prefix will automatically be added to the subject set configuration `'indexFields'` list.
+
 ## 1.1.3 (2020-12-10)
 
 - Update panoptes-client requirement to >=1.3
