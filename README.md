@@ -210,11 +210,11 @@ local_image_file_1.jpeg | local_image_file_2.jpeg | image_01 | giraffe | kenya_s
 If an upload fails for any reason, the CLI should detect the failure and give you the option of resuming the upload at a later time:
 
 ```
-$ panoptes subject-set upload-subjects -m image/jpeg -r 1 4667 manifest.csv 
+$ panoptes subject-set upload-subjects -m image/jpeg -r 1 4667 manifest.csv
 Uploading subjects  [------------------------------------]    0%  00:41:05
 Error: Upload failed.
 Would you like to save the upload state to resume the upload later? [Y/n]: y
-Enter filename to save to [panoptes-upload-4667.yaml]: 
+Enter filename to save to [panoptes-upload-4667.yaml]:
 ```
 
 This will save a new manifest file which you can use to resume the upload. The new manifest file will be in YAML format rather than CSV, and the YAML file contains all the information about the original upload (including any command-line options you specified) along with a list of the subjects which have not yet been uploaded.
@@ -283,3 +283,15 @@ To view the various requests as sent to the Panoptes API as well as other info,
 include the env var `PANOPTES_DEBUG=true` before your command, like so:
 
 `PANOPTES_DEBUG=true panoptes workflow ls -p 1234`
+
+### Usage
+
+1. Run `docker-compose build` to build the containers. Note there are mulitple containers for different envs, see docker-compose.yml for more details
+
+2. Create and run all the containers with `docker-compose up`
+
+### Testing
+
+1. Use docker to run a testing environment bash shell and run test commands .
+    1. Run `docker-compose run --rm dev sh` to start an interactive shell in the container
+    1. Run `python -m unittest discover` to run the full test suite
