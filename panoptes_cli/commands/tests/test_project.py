@@ -3,7 +3,7 @@ from panoptes_cli.commands.project import ls
 
 import unittest
 
-import warnings
+import warnings, sys
 
 class TestProject(unittest.TestCase):
     def __init__(self, *args, **kwargs):
@@ -11,11 +11,12 @@ class TestProject(unittest.TestCase):
         self.runner = CliRunner()
 
     def test_ls_id_public(self):
-        # avoid client socker warnings polluting our tests results
-        # this can go when the underlying client issue is fixed
-        # https://github.com/zooniverse/panoptes-python-client/issues/270
-        warnings.filterwarnings(
-            action="ignore", message="unclosed", category=ResourceWarning)
+        if sys.version_info >= (3, 0):
+            # avoid client socker warnings polluting our tests results
+            # this can go when the underlying client issue is fixed
+            # https://github.com/zooniverse/panoptes-python-client/issues/270
+            warnings.filterwarnings(
+                action="ignore", message="unclosed", category=ResourceWarning)
 
         result = self.runner.invoke(ls, ['--project-id', '1'])
         self.assertEqual(
