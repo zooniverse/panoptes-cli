@@ -3,7 +3,8 @@ from panoptes_cli.commands.project import ls
 
 import unittest
 
-import warnings, sys
+import warnings
+import sys
 
 class TestProject(unittest.TestCase):
     def __init__(self, *args, **kwargs):
