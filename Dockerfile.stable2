@@ -3,4 +3,4 @@ FROM python:2.7-alpine
 RUN apk add --no-cache libmagic
 RUN pip install panoptescli
 
-ENTRYPOINT [ "panoptes" ]
+CMD [ "panoptes" ]
