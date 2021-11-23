@@ -13,7 +13,7 @@ class TestProject(unittest.TestCase):
 
     def test_ls_id_public(self):
         if sys.version_info >= (3, 0):
-            # avoid client socker warnings polluting our tests results
+            # avoid client socket warnings polluting our test results
             # this can go when the underlying client issue is fixed
             # https://github.com/zooniverse/panoptes-python-client/issues/270
             warnings.filterwarnings(
