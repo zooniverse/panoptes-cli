@@ -1,4 +1,4 @@
-FROM python:3-alpine
+FROM python:3.9-alpine
 
 WORKDIR /usr/src/panoptes-cli
 
@@ -9,4 +9,4 @@ COPY . .
 
 RUN pip install .
 
-ENTRYPOINT [ "panoptes" ]
+CMD [ "panoptes" ]
