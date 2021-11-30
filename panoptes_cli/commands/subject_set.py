@@ -20,7 +20,6 @@ MAX_PENDING_SUBJECTS = 50
 MAX_UPLOAD_FILE_SIZE = 1024 * 1024
 CURRENT_STATE_VERSION = 1
 
-
 @cli.group(name='subject-set')
 def subject_set():
     """Contains commands for managing subject sets."""
@@ -562,6 +561,59 @@ def delete(force, subject_set_ids):
                 abort=True,
             )
         subject_set.delete()
+
+
+@subject_set.command(name="download-classifications")
+@click.argument('subject-set-id', required=True, type=int)
+@click.argument('output-file', required=True, type=click.File('wb'))
+@click.option(
+    '--generate',
+    '-g',
+    help="Generates a new export before downloading.",
+    is_flag=True
+)
+@click.option(
+    '--generate-timeout',
+    '-T',
+    help=(
+        "Time in seconds to wait for new export to be ready. Defaults to "
+        "unlimited. Has no effect unless --generate is given."
+    ),
+    required=False,
+    type=int,
+)
+def download_classifications(
+    subject_set_id,
+    output_file,
+    generate,
+    generate_timeout
+):
+    """
+    Downloads a subject-set specific classifications export for the given subject set.
+
+    OUTPUT_FILE will be overwritten if it already exists. Set OUTPUT_FILE to -
+    to output to stdout.
+    """
+
+    subject_set = SubjectSet.find(subject_set_id)
+
+    if generate:
+        click.echo("Generating new export...", err=True)
+
+    export = subject_set.get_export(
+        'classifications',
+        generate=generate,
+        wait_timeout=generate_timeout
+    )
+
+    with click.progressbar(
+        export.iter_content(chunk_size=1024),
+        label='Downloading',
+        length=(int(export.headers.get('content-length')) / 1024 + 1),
+        file=click.get_text_stream('stderr'),
+    ) as chunks:
+        for chunk in chunks:
+            output_file.write(chunk)
 
 
 def echo_subject_set(subject_set):
