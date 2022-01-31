@@ -15,7 +15,7 @@ setup(
         'Click>=6.7,<7.1',
         'PyYAML>=5.1,<5.5',
         'panoptes-client>=1.3,<2.0',
-        'humanize>=0.5.1,<1.1',
+        'humanize>=0.5.1,<3.15',
         'pathvalidate>=0.29.0,<0.30',
     ],
     entry_points='''
