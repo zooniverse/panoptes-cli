@@ -32,7 +32,7 @@ directly from GitHub (though be aware that this may contain
 bugs/untested/incomplete features):
 
 ```
-$ pip install -U git+git://github.com/zooniverse/panoptes-cli.git
+$ pip install -U git+https://github.com/zooniverse/panoptes-cli.git
 ```
 
 To upgrade an existing installation to the latest version:
