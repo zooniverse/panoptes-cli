@@ -333,18 +333,20 @@ def upload_subjects(
                                 upload_state['file_column'].append(
                                     field_number,
                                 )
-                                if not validate_file(file_path):
+                                if validate_file(file_path):
+                                    files.append(file_path)
+                                elif not upload_state['allow_missing']:
                                     return -1
-                                files.append(file_path)
                     else:
                         for field_number in upload_state['file_column']:
                             file_path = os.path.join(
                                 file_root,
                                 row[field_number - 1]
                             )
-                            if not validate_file(file_path):
+                            if validate_file(file_path):
+                                files.append(file_path)
+                            elif not upload_state['allow_missing']:
                                 return -1
-                            files.append(file_path)
 
                     for field_number, _mime_type in zip(
                         upload_state['remote_location'],
