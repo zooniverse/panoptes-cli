@@ -32,7 +32,7 @@ directly from GitHub (though be aware that this may contain
 bugs/untested/incomplete features):
 
 ```
-$ pip install -U git+git://github.com/zooniverse/panoptes-cli.git
+$ pip install -U git+https://github.com/zooniverse/panoptes-cli.git
 ```
 
 To upgrade an existing installation to the latest version:
@@ -229,6 +229,12 @@ $ panoptes subject-set upload-subjects 4667 panoptes-upload-4667.yaml
 
 ```
 $ panoptes project download --generate 2797 classifications.csv
+```
+
+It is also possible to generate and download workflow classification or subject set classification exports
+```
+$ panoptes workflow download-classifications --generate 18706 workflow-18706-classifications.csv
+$ panoptes subject-set download-classifications --generate 79758 subjectset-79759-classifications.csv
 ```
 
 ### Generate and download a talk comments export
