@@ -86,6 +86,34 @@ def retire_subjects(workflow_id, subject_ids, reason):
     workflow.retire_subjects(subject_ids, reason)
 
 
+@workflow.command(name='unretire-subjects')
+@click.argument('workflow-id', type=int)
+@click.argument('subject-ids', type=int, nargs=-1, required=True)
+def unretire_subjects(workflow_id, subject_ids):
+    """
+    Unretires subjects for the given workflow.
+
+    The subjects will be cleared of retirement data and be available for volunteers to classify.
+    """
+
+    workflow = Workflow.find(workflow_id)
+    workflow.unretire_subjects(subject_ids)
+
+
+@workflow.command(name='unretire-subject-sets')
+@click.argument('workflow-id', type=int)
+@click.argument('subject-set-ids', type=int, nargs=-1, required=True)
+def unretire_subject_sets(workflow_id, subject_set_ids):
+    """
+    Unretires all the subjects in the subject sets for the given workflow.
+
+    All subjects linked to the supplied subject sets will be cleared of retirement data and be available for volunteers to classify.
+    """
+
+    workflow = Workflow.find(workflow_id)
+    workflow.unretire_subjects_by_subject_set(subject_set_ids)
+
+
 @workflow.command(name='add-subject-sets')
 @click.argument('workflow-id', type=int)
 @click.argument('subject-set-ids', type=int, nargs=-1)
@@ -94,6 +122,7 @@ def add_subject_sets(workflow_id, subject_set_ids):
 
     workflow = Workflow.find(workflow_id)
     workflow.add_subject_sets(subject_set_ids)
+
 
 
 @workflow.command(name='remove-subject-sets')
