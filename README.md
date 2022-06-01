@@ -264,6 +264,27 @@ $ panoptes subject-set ls -w 1579
 4667 My first subject set
 ```
 
+### Retire subjects in a workflow
+
+```
+# for known subjects with ids 2001, 2001 and workflow with id 101
+$ panoptes workflow retire-subjects 101 2001 2002
+```
+
+### Un-Retire subjects in a workflow
+
+```
+# for known subjects with ids 2001, 2001 and workflow with id 101
+$ panoptes workflow unretire-subjects 101 2001 2002
+```
+
+#### By subject sets, i.e. for all the linked subjects in a subject set
+
+```
+# for known subject sets with ids 300, 301 and workflow with id 101
+panoptes workflow unretire-subject-sets 101 300 301
+```
+
 ### List subject sets in a project
 
 ```
