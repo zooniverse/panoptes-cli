@@ -55,3 +55,4 @@ from panoptes_cli.commands.subject import *
 from panoptes_cli.commands.subject_set import *
 from panoptes_cli.commands.user import *
 from panoptes_cli.commands.workflow import *
+from panoptes_cli.commands.inaturalist import *
