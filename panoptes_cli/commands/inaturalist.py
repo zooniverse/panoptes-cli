@@ -9,14 +9,15 @@ def inaturalist():
     """Contains commands related to iNaturalist integration"""
     pass
 
-@inaturalist.command(name='inat-import')
+
+@inaturalist.command(name='import-observations')
 @click.option(
     '--taxon-id',
-    help = (
+    help=(
         "iNaturalist Taxon ID of the taxa you want to import."
     ),
-    required = True,
-    type = int,
+    required=True,
+    type=int,
 )
 @click.option(
     '--subject-set-id',
@@ -29,5 +30,6 @@ def inaturalist():
 def import_observations(taxon_id, subject_set_id):
     """Requests Panoptes begin an iNaturalist subject import."""
 
-    click.echo(f'Importing taxon ID {taxon_id} into subject set {subject_set_id}:')
+    click.echo(f'Importing taxon ID {taxon_id} into subject set {subject_set_id}.')
     Inaturalist.inat_import(taxon_id, subject_set_id)
+
