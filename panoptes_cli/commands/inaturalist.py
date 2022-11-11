@@ -32,4 +32,3 @@ def import_observations(taxon_id, subject_set_id):
 
     click.echo(f'Importing taxon ID {taxon_id} into subject set {subject_set_id}.')
     Inaturalist.inat_import(taxon_id, subject_set_id)
-
