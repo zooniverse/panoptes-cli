@@ -13,7 +13,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'Click>=6.7,<7.1',
-        'PyYAML>=5.1,<5.5',
+        'PyYAML>=5.1,<6.1',
         'panoptes-client>=1.4,<2.0',
         'humanize>=0.5.1,<1.1',
         'pathvalidate>=0.29.0,<2.6',
