@@ -27,8 +27,15 @@ def inaturalist():
     required=True,
     type=int,
 )
-def import_observations(taxon_id, subject_set_id):
+@click.option(
+    '--updated-since',
+    help=(
+        "Optional: Import observations since this timestamp"
+    ),
+    required=False,
+)
+def import_observations(taxon_id, subject_set_id, updated_since=None):
     """Requests Panoptes begin an iNaturalist subject import."""
 
     click.echo(f'Importing taxon ID {taxon_id} into subject set {subject_set_id}.')
-    Inaturalist.inat_import(taxon_id, subject_set_id)
+    Inaturalist.inat_import(taxon_id, subject_set_id, updated_since)
