@@ -1,4 +1,6 @@
 from setuptools import setup, find_packages
+this_directory = Path(__file__).parent
+long_description = (this_directory / "README.md").read_text()
 
 setup(
     name='panoptescli',
@@ -9,6 +11,8 @@ setup(
     description=(
         'A command-line client for Panoptes, the API behind the Zooniverse'
     ),
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
