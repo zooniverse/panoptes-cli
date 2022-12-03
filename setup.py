@@ -2,10 +2,10 @@ from setuptools import setup, find_packages
 
 setup(
     name='panoptescli',
-    version='1.1.3',
+    version='1.1.4',
     url='https://github.com/zooniverse/panoptes-cli',
-    author='Adam McMaster',
-    author_email='adam@zooniverse.org',
+    author='Adam McMaster / Zooniverse',
+    author_email='contact@zooniverse.org',
     description=(
         'A command-line client for Panoptes, the API behind the Zooniverse'
     ),

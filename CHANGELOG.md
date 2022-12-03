@@ -1,6 +1,8 @@
-## Unreleased
+## 1.1.4 (2022-12-02)
 
 - New: support `%` in manifest column headings for indexed subject sets. Manifest headers with the `%` prefix will automatically be added to the subject set configuration `'indexFields'` list.
+- New: iNaturalist observation import functionality (see --help for details)
+- Update reqs for humanize, click, pyyaml, & pathvalidate
 
 ## 1.1.3 (2020-12-10)
 
