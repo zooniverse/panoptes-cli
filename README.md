@@ -304,6 +304,26 @@ $ panoptes subject-set ls -p 2797 4667
 $ panoptes subject-set add-subjects 999 3 2 1
 ```
 
+### Importing iNaturalist observations
+
+Importing iNaturalist observations to the Zooniverse as subjects is possible via an API endpoint. Project owners and collaborators can use this CLI to send
+a request to begin that import process:
+
+```
+# Requires an iNaturalist taxon id and a Zooniverse subject set (both integers). This will import all observations for that taxon id.
+$ panoptes inaturalist import-observations --taxon-id 46017 --subject-set-id 999999
+```
+
+Optional: include an updated_since timestamp (string) to include only observations updated after that date:
+
+```
+$ panoptes inaturalist import-observations --taxon-id 46017 --subject-set-id 999999 --updated-since 2022-12-03
+```
+
+Be aware that this command only initiates a background job on the Zooniverse to import Observations. The request will return a 200 upon success, but there
+is no progress to observe. You can refresh the subject set in the project builderto see how far along it is, and the authenticated user will receive an email
+when this job is completed.
+
 ## Debugging
 
 To view the various requests as sent to the Panoptes API as well as other info,
