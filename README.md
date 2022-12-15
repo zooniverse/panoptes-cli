@@ -320,6 +320,8 @@ Optional: include an updated_since timestamp (string) to include only observatio
 $ panoptes inaturalist import-observations --taxon-id 46017 --subject-set-id 999999 --updated-since 2022-12-03
 ```
 
+The `--updated-since` argument is a standard ISO timestamp, such as '2022-12-03' or `2022-12-03T18:56:06+00:00'. It is passed directly to the iNat Observations v2 API as the 'updated_since' query parameter. 
+
 Be aware that this command only initiates a background job on the Zooniverse to import Observations. The request will return a 200 upon success, but there
 is no progress to observe. You can refresh the subject set in the project builderto see how far along it is, and the authenticated user will receive an email
 when this job is completed.
