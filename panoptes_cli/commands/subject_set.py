@@ -311,7 +311,7 @@ def upload_subjects(
     if not resumed_upload:
         subject_rows = []
         for manifest_file in upload_state['manifest_files']:
-            with open(manifest_file, 'U') as manifest_f:
+            with open(manifest_file) as manifest_f:
                 file_root = os.path.dirname(manifest_file)
                 r = csv.reader(manifest_f, skipinitialspace=True)
                 headers = next(r)
