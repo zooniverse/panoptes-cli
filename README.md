@@ -6,9 +6,10 @@ the API behind [the Zooniverse](https://www.zooniverse.org/).
 ## Installation
 
 The Panoptes CLI is written in Python, so in order to install it you will need
-to install either Python 2 or Python 3, along with `pip`. macOS and Linux
-already come with Python installed, so run this to see if you already have
-everything you need:
+to install Python 3 along with `pip`. Please note: while still compatible with
+Python 2.7, we have ended support for use of the CLI with this deprecated version.
+macOS and Linux already come with Python installed, so run this to see if you 
+already have everything you need:
 
 ```
 $ python --version && pip --version
@@ -17,7 +18,8 @@ $ python --version && pip --version
 If you see an error like `python: command not found` or `pip: command not found`
 then you will need to install this:
 
-- [Python installation](https://wiki.python.org/moin/BeginnersGuide/Download)
+- [Python installation](https://wiki.python.org/moin/BeginnersGuide/Download) 
+  (or [Miniconda installation](https://docs.conda.io/en/latest/miniconda.html))
 - [Pip installation](https://pip.pypa.io/en/stable/installing/)
 
 Once these are installed you can just use `pip` to install the latest release of
