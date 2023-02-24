@@ -308,8 +308,11 @@ $ panoptes subject-set add-subjects 999 3 2 1
 
 ### Importing iNaturalist observations
 
-Importing iNaturalist observations to the Zooniverse as subjects is possible via an API endpoint. Project owners and collaborators can use this CLI to send
-a request to begin that import process:
+Importing iNaturalist observations to the Zooniverse as subjects is possible via an API endpoint, which is accessible via this client.
+
+This command initiates a background job on the Zooniverse platform to import Observations. The request will return a 200 upon success, and the import will begin as the Zooniverse and iNaturalist APIs talk to each other. Once the command is issued, the work is being done remotely and you can refresh the subject set in the project builder to check its progress. The authenticated user will receive an email when this job is completed; you don't have to keep the terminal open.
+
+This command imports “verifiable” observations, which  according to the iNat docs means “observations with a quality_grade of either `needs_id` or `research`." Project owners and collaborators can use this CLI to send a request to begin that import process:
 
 ```
 # Requires an iNaturalist taxon id and a Zooniverse subject set (both integers). This will import all observations for that taxon id.
@@ -324,9 +327,7 @@ $ panoptes inaturalist import-observations --taxon-id 46017 --subject-set-id 999
 
 The `--updated-since` argument is a standard ISO timestamp, such as '2022-12-03' or `2022-12-03T18:56:06+00:00'. It is passed directly to the iNat Observations v2 API as the 'updated_since' query parameter. 
 
-Be aware that this command only initiates a background job on the Zooniverse to import Observations. The request will return a 200 upon success, but there
-is no progress to observe. You can refresh the subject set in the project builderto see how far along it is, and the authenticated user will receive an email
-when this job is completed.
+
 
 ## Debugging
 
