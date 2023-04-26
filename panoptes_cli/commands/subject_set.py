@@ -408,7 +408,8 @@ def upload_subjects(
     def link_subjects(limit):
         if len(upload_state['waiting_to_link']) > limit:
             if logger is not None:
-                logger.debug(f"Linking {upload_state['waiting_to_link'].keys()} to {subject_set.id}")
+                logger.debug(f"Linking {upload_state['waiting_to_link'].keys()} "
+                             f"to {subject_set.id}")
             subject_set.add(list(upload_state['waiting_to_link'].keys()))
             upload_state['waiting_to_link'].clear()
 
@@ -448,7 +449,10 @@ def upload_subjects(
                 or len(upload_state['waiting_to_link']) > 0
             ):
                 if logger is not None:
-                    logger.error(f"Failed! There are {len(pending_subjects)} pending subjects and {len(upload_state['waiting_to_link'])} subjects unlinked!")
+                    logger.error(f"Failed! There are {len(pending_subjects)} "
+                                 "pending subjects and "
+                                 f"{len(upload_state['waiting_to_link'])} "
+                                 "subjects unlinked!")
                 click.echo('Error: Upload failed.', err=True)
                 if click.confirm(
                     'Would you like to save the upload state to resume the '
