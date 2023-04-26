@@ -11,6 +11,7 @@ import humanize
 
 from pathvalidate import is_valid_filename, sanitize_filename
 
+import logging
 from panoptes_cli.scripts.panoptes import cli
 from panoptes_client import SubjectSet
 from panoptes_client.panoptes import PanoptesAPIException
@@ -19,6 +20,11 @@ LINK_BATCH_SIZE = 10
 MAX_PENDING_SUBJECTS = 50
 MAX_UPLOAD_FILE_SIZE = 1024 * 1024
 CURRENT_STATE_VERSION = 1
+
+if os.environ.get("PANOPTES_DEBUG"):
+    logger = logging.getLogger('panoptes_client')
+else:
+    logger = None
 
 @cli.group(name='subject-set')
 def subject_set():
@@ -391,7 +397,9 @@ def upload_subjects(
     def move_created(limit):
         while len(pending_subjects) > limit:
             for subject, subject_row in pending_subjects:
-                if subject.async_save_result:
+                if subject._save_result:
+                    if logger is not None:
+                        logger.debug(f"Moving {subject}")
                     pending_subjects.remove((subject, subject_row))
                     upload_state['waiting_to_upload'].remove(subject_row)
                     upload_state['waiting_to_link'][subject.id] = subject_row
@@ -399,6 +407,8 @@ def upload_subjects(
 
     def link_subjects(limit):
         if len(upload_state['waiting_to_link']) > limit:
+            if logger is not None:
+                logger.debug(f"Linking {upload_state['waiting_to_link'].keys()} to {subject_set.id}")
             subject_set.add(list(upload_state['waiting_to_link'].keys()))
             upload_state['waiting_to_link'].clear()
 
@@ -408,28 +418,37 @@ def upload_subjects(
         label='Uploading subjects',
     ) as _subject_rows:
         try:
-            with Subject.async_saves():
-                for subject_row in _subject_rows:
-                    count, (files, metadata) = subject_row
-                    subject = Subject()
-                    subject.links.project = subject_set.links.project
-                    for media_file in files:
-                        subject.add_location(media_file)
-                    subject.metadata.update(metadata)
-                    subject.save()
+            for subject_row in _subject_rows:
+                if logger is not None:
+                    logger.debug("Starting new subject:")
+                count, (files, metadata) = subject_row
+                subject = Subject()
+                subject.links.project = subject_set.links.project
+                for media_file in files:
+                    subject.add_location(media_file)
+                subject.metadata.update(metadata)
+                subject.save()
 
-                    pending_subjects.append((subject, subject_row))
+                if logger is not None:
+                    logger.debug(f"Saved {subject.id}")
 
-                    move_created(MAX_PENDING_SUBJECTS)
-                    link_subjects(LINK_BATCH_SIZE)
+                pending_subjects.append((subject, subject_row))
+
+                move_created(MAX_PENDING_SUBJECTS)
+                link_subjects(LINK_BATCH_SIZE)
 
             move_created(0)
             link_subjects(0)
+        except Exception:
+            raise
         finally:
+            print(len(pending_subjects), len(upload_state['waiting_to_link']))
             if (
                 len(pending_subjects) > 0
                 or len(upload_state['waiting_to_link']) > 0
             ):
+                if logger is not None:
+                    logger.error(f"Failed! There are {len(pending_subjects)} pending subjects and {len(upload_state['waiting_to_link'])} subjects unlinked!")
                 click.echo('Error: Upload failed.', err=True)
                 if click.confirm(
                     'Would you like to save the upload state to resume the '
