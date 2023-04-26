@@ -22,7 +22,7 @@ MAX_UPLOAD_FILE_SIZE = 1024 * 1024
 CURRENT_STATE_VERSION = 1
 
 if os.environ.get("PANOPTES_DEBUG"):
-    logger = logging.getLogger('panoptes_client')
+    logger = logging.getLogger("panoptes_client")
 else:
     logger = None
 
