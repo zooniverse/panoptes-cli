@@ -397,7 +397,7 @@ def upload_subjects(
     def move_created(limit):
         while len(pending_subjects) > limit:
             for subject, subject_row in pending_subjects:
-                if subject._save_result:
+                if subject.async_save_result:
                     if logger is not None:
                         logger.debug(f"Moving {subject}")
                     pending_subjects.remove((subject, subject_row))
