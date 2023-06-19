@@ -421,24 +421,25 @@ def upload_subjects(
         label='Uploading subjects',
     ) as _subject_rows:
         try:
-            for subject_row in _subject_rows:
-                if logger is not None:
-                    logger.debug("Starting new subject:")
-                count, (files, metadata) = subject_row
-                subject = Subject()
-                subject.links.project = subject_set.links.project
-                for media_file in files:
-                    subject.add_location(media_file)
-                subject.metadata.update(metadata)
-                subject.save()
+            with Subject.async_saves():
+                for subject_row in _subject_rows:
+                    if logger is not None:
+                        logger.debug("Starting new subject:")
+                    count, (files, metadata) = subject_row
+                    subject = Subject()
+                    subject.links.project = subject_set.links.project
+                    for media_file in files:
+                        subject.add_location(media_file)
+                    subject.metadata.update(metadata)
+                    subject.save()
 
-                if logger is not None:
-                    logger.debug(f"Saved {subject.id}")
+                    if logger is not None:
+                        logger.debug(f"Saved {subject.id}")
 
-                pending_subjects.append((subject, subject_row))
+                    pending_subjects.append((subject, subject_row))
 
-                move_created(MAX_PENDING_SUBJECTS)
-                link_subjects(LINK_BATCH_SIZE)
+                    move_created(MAX_PENDING_SUBJECTS)
+                    link_subjects(LINK_BATCH_SIZE)
 
             move_created(0)
             link_subjects(0)
