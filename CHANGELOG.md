@@ -1,3 +1,9 @@
+## 1.1.5 (2023-07-11)
+- Update panoptes-client requirement to >=1.6
+- Bump humanize to <4.8
+- Fix: Remove deprecated U mode in file open
+- Update README with iNat and python 2 deprecation info.
+
 ## 1.1.4 (2022-12-02)
 
 - New: support `%` in manifest column headings for indexed subject sets. Manifest headers with the `%` prefix will automatically be added to the subject set configuration `'indexFields'` list.
