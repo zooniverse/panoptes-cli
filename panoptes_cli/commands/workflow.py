@@ -54,9 +54,18 @@ def ls(workflow_id, project_id, quiet):
 
 @workflow.command()
 @click.argument('workflow-id', required=True)
-def info(workflow_id):
+@click.argument('output-file', required=False, type=click.File('w'))
+def info(workflow_id, output_file):
+    """
+    Displays workflow metadata, or optionally writes it to a file.
+
+    OUTPUT_FILE will be overwritten if it already exists.
+    """
     workflow = Workflow.find(workflow_id)
-    click.echo(yaml.dump(workflow.raw))
+    if output_file:
+        yaml.dump(workflow.raw, output_file)
+    else:
+        click.echo(yaml.dump(workflow.raw))
 
 
 @workflow.command(name='retire-subjects')
@@ -228,6 +237,34 @@ def delete(force, workflow_ids):
                 abort=True,
             )
         workflow.delete()
+
+
+@workflow.command(name='import')
+@click.argument('project-id', required=True, type=int)
+@click.argument('input-file', required=True, type=click.File('r'))
+@click.argument('display-name', required=True, type=str)
+def import_workflow(project_id, input_file, display_name):
+    """
+    Creates a new workflow from metadata in a YAML file (as created by the
+    `panoptes workflow info` command).
+    """
+
+    input_data = yaml.load(input_file, Loader=yaml.FullLoader)
+    w = Workflow()
+    w.display_name = display_name
+    w.links.project = project_id
+    IMPORTED_ATTRS = (
+        'tasks',
+        'primary_language',
+        'configuration',
+        'first_task',
+        'mobile_friendly',
+        'retirement',
+    )
+    for attr in IMPORTED_ATTRS:
+        setattr(w, attr, input_data[attr])
+    w.save()
+    echo_workflow(w)
 
 
 def echo_workflow(workflow):
