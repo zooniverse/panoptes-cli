@@ -3,6 +3,7 @@ import copy
 import os
 import re
 import sys
+import io
 import time
 import yaml
 
@@ -11,14 +12,93 @@ import humanize
 
 from pathvalidate import is_valid_filename, sanitize_filename
 
+from PIL import Image
+
 from panoptes_cli.scripts.panoptes import cli
 from panoptes_client import SubjectSet
 from panoptes_client.panoptes import PanoptesAPIException
+from panoptes_client.subject import UnknownMediaException
+import logging
 
+try:
+    import magic
+    MEDIA_TYPE_DETECTION = 'magic'
+except ImportError:
+    import pkg_resources
+    try:
+        pkg_resources.require("python-magic")
+        logging.getLogger('panoptes_client').warn(
+            'Broken libmagic installation detected. The python-magic module is'
+            ' installed but can\'t be imported. Please check that both '
+            'python-magic and the libmagic shared library are installed '
+            'correctly. Uploading media other than images may not work.'
+        )
+    except pkg_resources.DistributionNotFound:
+        pass
+    import imghdr
+    MEDIA_TYPE_DETECTION = 'imghdr'
+
+_OLD_STR_TYPES = (str,)
+try:
+    _OLD_STR_TYPES = _OLD_STR_TYPES + (unicode,)
+except NameError:
+    pass
+
+IMG_MIME_TYPES = ['image/png', 'image/jpeg']
 LINK_BATCH_SIZE = 10
 MAX_PENDING_SUBJECTS = 50
 MAX_UPLOAD_FILE_SIZE = 1024 * 1024
 CURRENT_STATE_VERSION = 1
+
+
+def save_and_compress_image(img, output_bytes, quality=None):
+    """ Compress image object (only JPEG) """
+    if (quality is not None) and (img.format == 'JPEG'):
+        img.save(output_bytes, quality=quality, format="JPEG")
+    else:
+        img.save(output_bytes, format="JPEG")
+
+
+def resize_and_compress_single_image(
+        image_path,
+        save_quality=50):
+    """ Resize and compress a single image and return Byte object """
+    # Read the file from disk
+    with open(image_path, 'rb') as f:
+        img = Image.open(io.BytesIO(f.read()))
+        # resize if necessary
+        # Save to Bytes and Change quality (only for JPEG)
+        bytes_obj = io.BytesIO()
+        save_and_compress_image(img, bytes_obj, save_quality)
+        readable_bytes = io.BytesIO(bytes_obj.getvalue())
+    return readable_bytes
+
+
+def get_mime_type(location):
+    if type(location) in (str,) + _OLD_STR_TYPES:
+        f = open(location, 'rb')
+    else:
+        f = location
+
+    try:
+        media_data = f.read()
+        if MEDIA_TYPE_DETECTION == 'magic':
+            media_type = magic.from_buffer(media_data, mime=True)
+        else:
+            media_type = imghdr.what(None, media_data)
+            if not media_type:
+                raise UnknownMediaException(
+                    'Could not detect file type. Please try installing '
+                    'libmagic: https://panoptes-python-client.readthedocs.'
+                    'io/en/latest/user_guide.html#uploading-non-image-'
+                    'media-types'
+                )
+            media_type = 'image/{}'.format(media_type)
+    finally:
+        f.close()
+
+    return media_type
+
 
 @cli.group(name='subject-set')
 def subject_set():
@@ -141,6 +221,12 @@ def modify(subject_set_id, display_name):
     is_flag=True,
 )
 @click.option(
+    '--compress',
+    '-C',
+    help=("Compress image files if larger than file size."),
+    is_flag=True,
+)
+@click.option(
     '--remote-location',
     '-r',
     help=(
@@ -181,6 +267,7 @@ def upload_subjects(
     subject_set_id,
     manifest_files,
     allow_missing,
+    compress,
     remote_location,
     mime_type,
     file_column,
@@ -251,6 +338,7 @@ def upload_subjects(
             'manifest_files': manifest_files,
             'allow_missing': allow_missing,
             'remote_location': remote_location,
+            'compress': compress,
             'mime_type': mime_type,
             'file_column': file_column,
             'waiting_to_upload': [],
@@ -291,9 +379,9 @@ def upload_subjects(
                 err=True,
             )
             return False
-        elif file_size > MAX_UPLOAD_FILE_SIZE:
+        elif file_size > MAX_UPLOAD_FILE_SIZE and not upload_state['compress']:
             click.echo(
-                'Error: File "{}" is {}, larger than the maximum {}.'.format(
+                'Error: File "{}" is {}, larger than the maximum {} and compression is disabled.'.format(
                     file_path,
                     humanize.naturalsize(file_size),
                     humanize.naturalsize(MAX_UPLOAD_FILE_SIZE),
@@ -414,6 +502,19 @@ def upload_subjects(
                     subject = Subject()
                     subject.links.project = subject_set.links.project
                     for media_file in files:
+                        if os.path.getsize(media_file) > MAX_UPLOAD_FILE_SIZE:
+                            if get_mime_type(media_file) in IMG_MIME_TYPES:
+                                media_file = resize_and_compress_single_image(media_file)
+                            else:
+                                click.echo(
+                                    'Error: File "{}" is {}, larger than the maximum {} and is of type {} which is not an image.'.format(
+                                        media_file,
+                                        humanize.naturalsize(os.path.getsize(media_file)),
+                                        humanize.naturalsize(MAX_UPLOAD_FILE_SIZE),
+                                        get_mime_type(media_file)
+                                    ),
+                                    err=True,
+                                )
                         subject.add_location(media_file)
                     subject.metadata.update(metadata)
                     subject.save()
