@@ -44,43 +44,40 @@ try:
 except NameError:
     pass
 
-IMG_MIME_TYPES = ['image/png', 'image/jpeg']
+IMG_MIME_TYPES = ['image/jpeg']
 LINK_BATCH_SIZE = 10
 MAX_PENDING_SUBJECTS = 50
 MAX_UPLOAD_FILE_SIZE = 1024 * 1024
 CURRENT_STATE_VERSION = 1
 
 
-def save_and_compress_image(img, output_bytes, quality=None):
-    """ Compress image object (only JPEG) """
-    if (quality is not None) and (img.format == 'JPEG'):
-        img.save(output_bytes, quality=quality, format="JPEG")
-    else:
-        img.save(output_bytes, format="JPEG")
-
-
-def resize_and_compress_single_image(
-        image_path,
-        save_quality=50):
+def compress_image(image_path, save_quality=70):
     """ Resize and compress a single image and return Byte object """
     # Read the file from disk
+    mime_type = get_mime_type(image_path)
+
+    if mime_type not in IMG_MIME_TYPES:
+        raise UnknownMediaException(f"Media type {mime_type} is not an image format")
+
+    format = mime_type.replace('image/', '')
+    logging.getLogger('panoptes_client').info(f'Compressing {image_path}')
+
     with open(image_path, 'rb') as f:
         img = Image.open(io.BytesIO(f.read()))
         # resize if necessary
         # Save to Bytes and Change quality (only for JPEG)
         bytes_obj = io.BytesIO()
-        save_and_compress_image(img, bytes_obj, save_quality)
+        img.save(bytes_obj, optimize=True, quality=save_quality, format=format)
         readable_bytes = io.BytesIO(bytes_obj.getvalue())
+
     return readable_bytes
 
 
-def get_mime_type(location):
-    if type(location) in (str,) + _OLD_STR_TYPES:
-        f = open(location, 'rb')
-    else:
-        f = location
-
-    try:
+def get_mime_type(file):
+    '''
+        Get the MIME type for a given input filename or file object
+    '''
+    with open(file, 'rb') as f:
         media_data = f.read()
         if MEDIA_TYPE_DETECTION == 'magic':
             media_type = magic.from_buffer(media_data, mime=True)
@@ -94,10 +91,8 @@ def get_mime_type(location):
                     'media-types'
                 )
             media_type = 'image/{}'.format(media_type)
-    finally:
-        f.close()
 
-    return media_type
+        return media_type
 
 
 @cli.group(name='subject-set')
@@ -371,6 +366,7 @@ def upload_subjects(
             return False
 
         file_size = os.path.getsize(file_path)
+        mime_type = get_mime_type(file_path)
         if file_size == 0:
             click.echo(
                 'Error: File "{}" is empty.'.format(
@@ -379,16 +375,20 @@ def upload_subjects(
                 err=True,
             )
             return False
-        elif file_size > MAX_UPLOAD_FILE_SIZE and not upload_state['compress']:
-            click.echo(
-                'Error: File "{}" is {}, larger than the maximum {} and compression is disabled.'.format(
-                    file_path,
-                    humanize.naturalsize(file_size),
-                    humanize.naturalsize(MAX_UPLOAD_FILE_SIZE),
-                ),
-                err=True,
-            )
-            return False
+        elif (file_size > MAX_UPLOAD_FILE_SIZE):
+            if (upload_state['compress']) and (mime_type in IMG_MIME_TYPES):
+                return True
+            else:
+                click.echo(
+                    'Error: File "{}" is {}, larger than the maximum {} and compression is disabled or MIME type {} is not supported for compression.'.format(
+                        file_path,
+                        humanize.naturalsize(file_size),
+                        humanize.naturalsize(MAX_UPLOAD_FILE_SIZE),
+                        mime_type
+                    ),
+                    err=True,
+                )
+                return False
         return True
 
     def get_index_fields(headers):
@@ -502,19 +502,16 @@ def upload_subjects(
                     subject = Subject()
                     subject.links.project = subject_set.links.project
                     for media_file in files:
-                        if os.path.getsize(media_file) > MAX_UPLOAD_FILE_SIZE:
-                            if get_mime_type(media_file) in IMG_MIME_TYPES:
-                                media_file = resize_and_compress_single_image(media_file)
-                            else:
-                                click.echo(
-                                    'Error: File "{}" is {}, larger than the maximum {} and is of type {} which is not an image.'.format(
-                                        media_file,
-                                        humanize.naturalsize(os.path.getsize(media_file)),
-                                        humanize.naturalsize(MAX_UPLOAD_FILE_SIZE),
-                                        get_mime_type(media_file)
-                                    ),
-                                    err=True,
-                                )
+                        if os.path.getsize(media_file) > MAX_UPLOAD_FILE_SIZE and upload_state['compress']:
+                            # compress with lower quality until the size fits
+                            input_file = media_file
+                            for n in range(11):
+                                quality = 80 - n * 3
+                                media_file = compress_image(input_file, save_quality=quality)
+                                if media_file.getbuffer().nbytes <= MAX_UPLOAD_FILE_SIZE:
+                                    break
+                            if media_file.getbuffer().nbytes > MAX_UPLOAD_FILE_SIZE:
+                                raise ValueError(f"Could not reduce file size below {humanize.naturalsize(MAX_UPLOAD_FILE_SIZE)} at {quality} quality")
                         subject.add_location(media_file)
                     subject.metadata.update(metadata)
                     subject.save()
