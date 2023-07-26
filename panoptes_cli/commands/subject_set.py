@@ -57,7 +57,9 @@ def compress_image(image_path, save_quality=70):
     mime_type = get_mime_type(image_path)
 
     if mime_type not in IMG_MIME_TYPES:
-        raise UnknownMediaException(f"Media type {mime_type} is not an image format")
+        raise UnknownMediaException(
+            f"Media type {mime_type} is not an image format"
+        )
 
     format = mime_type.replace('image/', '')
     logging.getLogger('panoptes_client').info(f'Compressing {image_path}')
@@ -380,7 +382,9 @@ def upload_subjects(
                 return True
             else:
                 click.echo(
-                    'Error: File "{}" is {}, larger than the maximum {} and compression is disabled or MIME type {} is not supported for compression.'.format(
+                    'Error: File "{}" is {}, larger than the maximum {} and'
+                    'compression is disabled or MIME type {} is not supported'
+                    'for compression.'.format(
                         file_path,
                         humanize.naturalsize(file_size),
                         humanize.naturalsize(MAX_UPLOAD_FILE_SIZE),
@@ -502,16 +506,23 @@ def upload_subjects(
                     subject = Subject()
                     subject.links.project = subject_set.links.project
                     for media_file in files:
-                        if os.path.getsize(media_file) > MAX_UPLOAD_FILE_SIZE and upload_state['compress']:
+                        file_size = os.path.getsize(media_file)
+                        if (file_size > MAX_UPLOAD_FILE_SIZE) and \
+                                (upload_state['compress']):
                             # compress with lower quality until the size fits
                             input_file = media_file
                             for n in range(11):
                                 quality = 80 - n * 3
-                                media_file = compress_image(input_file, save_quality=quality)
-                                if media_file.getbuffer().nbytes <= MAX_UPLOAD_FILE_SIZE:
+                                media_file = compress_image(input_file,
+                                                save_quality=quality)
+                                new_file_size = media_file.getbuffer().nbytes
+                                if new_file_size <= MAX_UPLOAD_FILE_SIZE:
                                     break
-                            if media_file.getbuffer().nbytes > MAX_UPLOAD_FILE_SIZE:
-                                raise ValueError(f"Could not reduce file size below {humanize.naturalsize(MAX_UPLOAD_FILE_SIZE)} at {quality} quality")
+                            if new_file_size > MAX_UPLOAD_FILE_SIZE:
+                                raise ValueError(
+                                    "Could not reduce file size below limit"
+                                    f"at {quality} quality"
+                                )
                         subject.add_location(media_file)
                     subject.metadata.update(metadata)
                     subject.save()
