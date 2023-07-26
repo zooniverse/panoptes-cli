@@ -514,7 +514,7 @@ def upload_subjects(
                             for n in range(11):
                                 quality = 80 - n * 3
                                 media_file = compress_image(input_file,
-                                                save_quality=quality)
+                                                            quality)
                                 new_file_size = media_file.getbuffer().nbytes
                                 if new_file_size <= MAX_UPLOAD_FILE_SIZE:
                                     break
