@@ -220,7 +220,8 @@ def modify(subject_set_id, display_name):
 @click.option(
     '--compress',
     '-C',
-    help=(f"Compress image files if larger than file size limit of {humanize.naturalsize(MAX_UPLOAD_FILE_SIZE)}."),
+    help=(f"Compress image files if larger than file size limit"
+          f"of {humanize.naturalsize(MAX_UPLOAD_FILE_SIZE)}."),
     is_flag=True,
 )
 @click.option(
