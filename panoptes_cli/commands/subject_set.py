@@ -22,7 +22,7 @@ import logging
 
 try:
     import magic
-    MEDIA_TYPE_DETECTION = 'magic'
+    MEDIA_TYPE_DETECTION = "magic"
 except ImportError:
     import pkg_resources
     try:
@@ -58,7 +58,7 @@ def compress_image(image_path, save_quality=70):
 
     if mime_type not in IMG_MIME_TYPES:
         raise UnknownMediaException(
-            f"Media type {mime_type} is not an image format"
+            f"Media type {mime_type} is not a JPEG format"
         )
 
     format = mime_type.replace('image/', '')
@@ -220,7 +220,7 @@ def modify(subject_set_id, display_name):
 @click.option(
     '--compress',
     '-C',
-    help=("Compress image files if larger than file size."),
+    help=(f"Compress image files if larger than file size limit of {humanize.naturalsize(MAX_UPLOAD_FILE_SIZE)}."),
     is_flag=True,
 )
 @click.option(
