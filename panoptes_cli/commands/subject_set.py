@@ -220,7 +220,7 @@ def modify(subject_set_id, display_name):
 @click.option(
     '--compress',
     '-C',
-    help=(f"Compress image files if larger than file size limit"
+    help=(f"Compress JPEG image files if larger than file size limit"
           f"of {humanize.naturalsize(MAX_UPLOAD_FILE_SIZE)}."),
     is_flag=True,
 )
@@ -520,10 +520,12 @@ def upload_subjects(
                                 if new_file_size <= MAX_UPLOAD_FILE_SIZE:
                                     break
                             if new_file_size > MAX_UPLOAD_FILE_SIZE:
-                                raise ValueError(
+                                click.echo(
                                     "Could not reduce file size below limit"
-                                    f"at {quality} quality"
+                                    f"at {quality} quality",
+                                    err=True
                                 )
+                                return -1
                         subject.add_location(media_file)
                     subject.metadata.update(metadata)
                     subject.save()
