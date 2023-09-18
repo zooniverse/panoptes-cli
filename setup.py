@@ -21,7 +21,7 @@ setup(
         'PyYAML>=5.1,<6.1',
         'panoptes-client>=1.6,<2.0',
         'humanize>=0.5.1,<4.8',
-        'pathvalidate>=0.29.0,<2.6',
+        'pathvalidate>=0.29.0,<3.3',
     ],
     entry_points='''
         [console_scripts]
