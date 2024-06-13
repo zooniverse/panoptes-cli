@@ -22,10 +22,12 @@ def info(ctx):
             platform.system(),
             platform.release(),
         ),
+        'Python version': platform.python_version(),
         'API endpoint': ctx.parent.config['endpoint'],
         'Click': importlib.metadata.version("click"),
         'PyYAML': importlib.metadata.version("pyyaml"),
-        'Python version': platform.python_version(),
+        'requests': importlib.metadata.version("requests"),
+        'urllib3': importlib.metadata.version("urllib3")
     }
 
     try:
