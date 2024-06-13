@@ -1,7 +1,7 @@
 import platform
 
 import click
-import pkg_resources
+import importlib.metadata
 
 from panoptes_cli.scripts.panoptes import cli
 
@@ -13,24 +13,24 @@ def info(ctx):
 
     info = {
         'Panoptes CLI version': (
-            pkg_resources.require("panoptescli")[0].version
+            importlib.metadata.version("panoptescli")
         ),
         'Panoptes client version': (
-            pkg_resources.require("panoptes_client")[0].version
+            importlib.metadata.version("panoptes_client")
         ),
         'Operating system': '{} {}'.format(
             platform.system(),
             platform.release(),
         ),
         'API endpoint': ctx.parent.config['endpoint'],
-        'Click': pkg_resources.require("click")[0].version,
-        'PyYAML': pkg_resources.require("PyYAML")[0].version,
+        'Click': importlib.metadata.version("click"),
+        'PyYAML': importlib.metadata.version("pyyaml"),
         'Python version': platform.python_version(),
     }
 
     try:
-        info['libmagic'] = pkg_resources.require("python-magic")[0].version
-    except pkg_resources.DistributionNotFound:
+        info['libmagic'] = importlib.metadata.version("python-magic")
+    except importlib.metadata.PackageNotFoundError:
         info['libmagic'] = False
 
     for k, v in info.items():
