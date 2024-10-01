@@ -4,7 +4,7 @@ import click
 
 from panoptes_cli.scripts.panoptes import cli
 from panoptes_client import Workflow
-
+from panoptes_client.panoptes import PanoptesAPIException
 
 @cli.group()
 def workflow():
@@ -229,6 +229,32 @@ def delete(force, workflow_ids):
             )
         workflow.delete()
 
+@workflow.command()
+@click.argument('workflow-id', required=True, type=int)
+@click.argument('user-id', required=True, type=int)
+@click.option('--delete-if-exists', '-d', is_flag=True, help='Delete if it exists.')
+def run_aggregation(workflow_id, user_id, delete_if_exists):
+    agg = Workflow(workflow_id).run_aggregation(user_id, delete_if_exists)
+    try:
+        click.echo(agg.raw)
+    except PanoptesAPIException as err:
+        click.echo(err)
+
+@workflow.command()
+@click.argument('workflow-id', required=True, type=int)
+def get_batch_aggregations(workflow_id):
+    agg = Workflow(workflow_id).get_batch_aggregations()
+    click.echo(agg.object_list)
+
+@workflow.command()
+@click.argument('workflow-id', required=True, type=int)
+def check_batch_aggregation_run_status(workflow_id):
+    click.echo(Workflow(workflow_id).check_batch_aggregation_run_status())
+
+@workflow.command()
+@click.argument('workflow-id', required=True, type=int)
+def get_batch_aggregation_links(workflow_id):
+    click.echo(Workflow(workflow_id).get_batch_aggregation_links())
 
 def echo_workflow(workflow):
     click.echo(
