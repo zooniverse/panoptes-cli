@@ -8,7 +8,7 @@ the API behind [the Zooniverse](https://www.zooniverse.org/).
 The Panoptes CLI is written in Python, so in order to install it you will need
 to install Python 3 along with `pip`. Please note: while still compatible with
 Python 2.7, we have ended support for use of the CLI with this deprecated version.
-macOS and Linux already come with Python installed, so run this to see if you 
+macOS and Linux already come with Python installed, so run this to see if you
 already have everything you need:
 
 ```
@@ -18,7 +18,7 @@ $ python --version && pip --version
 If you see an error like `python: command not found` or `pip: command not found`
 then you will need to install this:
 
-- [Python installation](https://wiki.python.org/moin/BeginnersGuide/Download) 
+- [Python installation](https://wiki.python.org/moin/BeginnersGuide/Download)
   (or [Miniconda installation](https://docs.conda.io/en/latest/miniconda.html))
 - [Pip installation](https://pip.pypa.io/en/stable/installing/)
 
@@ -280,6 +280,34 @@ $ panoptes workflow retire-subjects 101 2001 2002
 $ panoptes workflow unretire-subjects 101 2001 2002
 ```
 
+### Run aggregations
+
+```
+# for running batch aggregation on workflow with id 101, user id 2001 and conditional delete flag -d
+$ panoptes workflow run-aggregation 101 2001 -d
+```
+
+### Get batch aggregations
+
+```
+# for fetching existing batch aggregation on workflow with id 101
+$ panoptes workflow get-batch-aggregations 101
+```
+
+### Check batch aggregation run status
+
+```
+# for checking existing batch aggregation status on workflow with id 101
+$ panoptes workflow check-batch-aggregation-run-status 101
+```
+
+### Get batch aggregation links
+
+```
+# for fetching links to the run aggregation on workflow with id 101
+$ panoptes workflow get-batch-aggregation-links 101
+```
+
 #### By subject sets, i.e. for all the linked subjects in a subject set
 
 ```
@@ -325,7 +353,7 @@ Optional: include an updated_since timestamp (string) to include only observatio
 $ panoptes inaturalist import-observations --taxon-id 46017 --subject-set-id 999999 --updated-since 2022-12-03
 ```
 
-The `--updated-since` argument is a standard ISO timestamp, such as '2022-12-03' or `2022-12-03T18:56:06+00:00'. It is passed directly to the iNat Observations v2 API as the 'updated_since' query parameter. 
+The `--updated-since` argument is a standard ISO timestamp, such as '2022-12-03' or `2022-12-03T18:56:06+00:00'. It is passed directly to the iNat Observations v2 API as the 'updated_since' query parameter.
 
 
 
