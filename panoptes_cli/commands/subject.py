@@ -108,10 +108,5 @@ def update_metadata(replace, metadata_file):
 
 
 def echo_subject(subject):
-    click.echo(
-        "{} {}".format(
-            subject.id, " ".join(map(
-                lambda l: list(l.values())[0], subject.locations
-            ))
-        )
-    )
+    m = map(lambda l: list(l.values())[0], subject.locations)
+    click.echo("{} {}".format(subject.id, " ".join(m)))
