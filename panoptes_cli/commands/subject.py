@@ -9,7 +9,7 @@ from panoptes_client import Subject
 
 @cli.group()
 def subject():
-    """Contains commands for retrieving and updating information about subjects."""
+    """Contains commands for managing subjects."""
 
     pass
 
@@ -85,8 +85,8 @@ def update_metadata(replace, metadata_file):
     """
     Updates subject metadata from a CSV file.
 
-    The CSV file should contain a "subject_id" column listing subject IDs. All other column names
-    are taken to be metadata keys.
+    The CSV file should contain a "subject_id" column listing subject IDs.
+    All other column names are taken to be metadata keys.
     """
     with open(metadata_file, "r") as metadata_f:
         total_tows = len(metadata_f.readlines())
