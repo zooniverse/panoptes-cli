@@ -1,3 +1,9 @@
+## 1.2.0 (2024-03-07)
+- Update: Replace pkg_resources with importlib.metadata
+- New: Add new package versions to info for debugging
+- New: Add subject update-metadata command
+- New: Add batch Aggregation
+
 ## 1.1.5 (2023-07-11)
 - Update panoptes-client requirement to >=1.6
 - Bump humanize to <4.8
