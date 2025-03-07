@@ -1,4 +1,4 @@
-## 1.1.6 (2024-03-07)
+## 1.2.0 (2024-03-07)
 - Update: Replace pkg_resources with importlib.metadata
 - New: Add new package versions to info for debugging
 - New: Add subject update-metadata command
