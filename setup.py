@@ -5,7 +5,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name='panoptescli',
-    version='1.1.6',
+    version='1.2.0',
     url='https://github.com/zooniverse/panoptes-cli',
     author='Adam McMaster / Zooniverse',
     author_email='contact@zooniverse.org',
@@ -19,7 +19,7 @@ setup(
     install_requires=[
         'Click>=6.7,<8.2',
         'PyYAML>=5.1,<6.1',
-        'panoptes-client>=1.6,<2.0',
+        'panoptes-client>=1.7,<2.0',
         'humanize>=0.5.1,<4.8',
         'pathvalidate>=0.29.0,<2.6',
     ],
