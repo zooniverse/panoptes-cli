@@ -101,13 +101,13 @@ def update_metadata(replace, metadata_file):
                 subject_id = metadata.pop("subject_id")
                 try:
                     subject = Subject.find(subject_id)
+                    if replace:
+                        subject.metadata = dict(metadata)
+                    else:
+                        subject.metadata.update(metadata)
+                    subject.save()
                 except Exception as e:
                     click.echo(f"Failed to update subject {subject_id}: {e}", err=True)
-                if replace:
-                    subject.metadata = dict(metadata)
-                else:
-                    subject.metadata.update(metadata)
-                subject.save()
 
 
 def echo_subject(subject):
