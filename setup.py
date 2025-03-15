@@ -17,6 +17,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
+        'Pillow>=5.4.0,<=7.0.0',
         'Click>=6.7,<8.2',
         'PyYAML>=5.1,<6.1',
         'panoptes-client>=1.7,<2.0',

@@ -3,6 +3,7 @@ import copy
 import os
 import re
 import sys
+import io
 import time
 import yaml
 
@@ -11,14 +12,90 @@ import humanize
 
 from pathvalidate import is_valid_filename, sanitize_filename
 
+from PIL import Image
+
 from panoptes_cli.scripts.panoptes import cli
 from panoptes_client import SubjectSet
 from panoptes_client.panoptes import PanoptesAPIException
+from panoptes_client.subject import UnknownMediaException
+import logging
 
+try:
+    import magic
+    MEDIA_TYPE_DETECTION = "magic"
+except ImportError:
+    import pkg_resources
+    try:
+        pkg_resources.require("python-magic")
+        logging.getLogger('panoptes_client').warn(
+            'Broken libmagic installation detected. The python-magic module is'
+            ' installed but can\'t be imported. Please check that both '
+            'python-magic and the libmagic shared library are installed '
+            'correctly. Uploading media other than images may not work.'
+        )
+    except pkg_resources.DistributionNotFound:
+        pass
+    import imghdr
+    MEDIA_TYPE_DETECTION = 'imghdr'
+
+_OLD_STR_TYPES = (str,)
+try:
+    _OLD_STR_TYPES = _OLD_STR_TYPES + (unicode,)
+except NameError:
+    pass
+
+IMG_MIME_TYPES = ['image/jpeg']
 LINK_BATCH_SIZE = 10
 MAX_PENDING_SUBJECTS = 50
 MAX_UPLOAD_FILE_SIZE = 1024 * 1024
 CURRENT_STATE_VERSION = 1
+
+
+def compress_image(image_path, save_quality=70):
+    """ Resize and compress a single image and return Byte object """
+    # Read the file from disk
+    mime_type = get_mime_type(image_path)
+
+    if mime_type not in IMG_MIME_TYPES:
+        raise UnknownMediaException(
+            f"Media type {mime_type} is not a JPEG format"
+        )
+
+    format = mime_type.replace('image/', '')
+    logging.getLogger('panoptes_client').info(f'Compressing {image_path}')
+
+    with open(image_path, 'rb') as f:
+        img = Image.open(io.BytesIO(f.read()))
+        # resize if necessary
+        # Save to Bytes and Change quality (only for JPEG)
+        bytes_obj = io.BytesIO()
+        img.save(bytes_obj, optimize=True, quality=save_quality, format=format)
+        readable_bytes = io.BytesIO(bytes_obj.getvalue())
+
+    return readable_bytes
+
+
+def get_mime_type(file):
+    '''
+        Get the MIME type for a given input filename or file object
+    '''
+    with open(file, 'rb') as f:
+        media_data = f.read()
+        if MEDIA_TYPE_DETECTION == 'magic':
+            media_type = magic.from_buffer(media_data, mime=True)
+        else:
+            media_type = imghdr.what(None, media_data)
+            if not media_type:
+                raise UnknownMediaException(
+                    'Could not detect file type. Please try installing '
+                    'libmagic: https://panoptes-python-client.readthedocs.'
+                    'io/en/latest/user_guide.html#uploading-non-image-'
+                    'media-types'
+                )
+            media_type = 'image/{}'.format(media_type)
+
+        return media_type
+
 
 @cli.group(name='subject-set')
 def subject_set():
@@ -141,6 +218,13 @@ def modify(subject_set_id, display_name):
     is_flag=True,
 )
 @click.option(
+    '--compress',
+    '-C',
+    help=(f"Compress JPEG image files if larger than file size limit"
+          f"of {humanize.naturalsize(MAX_UPLOAD_FILE_SIZE)}."),
+    is_flag=True,
+)
+@click.option(
     '--remote-location',
     '-r',
     help=(
@@ -181,6 +265,7 @@ def upload_subjects(
     subject_set_id,
     manifest_files,
     allow_missing,
+    compress,
     remote_location,
     mime_type,
     file_column,
@@ -251,6 +336,7 @@ def upload_subjects(
             'manifest_files': manifest_files,
             'allow_missing': allow_missing,
             'remote_location': remote_location,
+            'compress': compress,
             'mime_type': mime_type,
             'file_column': file_column,
             'waiting_to_upload': [],
@@ -283,6 +369,7 @@ def upload_subjects(
             return False
 
         file_size = os.path.getsize(file_path)
+        mime_type = get_mime_type(file_path)
         if file_size == 0:
             click.echo(
                 'Error: File "{}" is empty.'.format(
@@ -291,16 +378,22 @@ def upload_subjects(
                 err=True,
             )
             return False
-        elif file_size > MAX_UPLOAD_FILE_SIZE:
-            click.echo(
-                'Error: File "{}" is {}, larger than the maximum {}.'.format(
-                    file_path,
-                    humanize.naturalsize(file_size),
-                    humanize.naturalsize(MAX_UPLOAD_FILE_SIZE),
-                ),
-                err=True,
-            )
-            return False
+        elif (file_size > MAX_UPLOAD_FILE_SIZE):
+            if (upload_state['compress']) and (mime_type in IMG_MIME_TYPES):
+                return True
+            else:
+                click.echo(
+                    'Error: File "{}" is {}, larger than the maximum {} and'
+                    'compression is disabled or MIME type {} is not supported'
+                    'for compression.'.format(
+                        file_path,
+                        humanize.naturalsize(file_size),
+                        humanize.naturalsize(MAX_UPLOAD_FILE_SIZE),
+                        mime_type
+                    ),
+                    err=True,
+                )
+                return False
         return True
 
     def get_index_fields(headers):
@@ -414,6 +507,25 @@ def upload_subjects(
                     subject = Subject()
                     subject.links.project = subject_set.links.project
                     for media_file in files:
+                        file_size = os.path.getsize(media_file)
+                        if (file_size > MAX_UPLOAD_FILE_SIZE) and \
+                                (upload_state['compress']):
+                            # compress with lower quality until the size fits
+                            input_file = media_file
+                            for n in range(11):
+                                quality = 80 - n * 3
+                                media_file = compress_image(input_file,
+                                                            quality)
+                                new_file_size = media_file.getbuffer().nbytes
+                                if new_file_size <= MAX_UPLOAD_FILE_SIZE:
+                                    break
+                            if new_file_size > MAX_UPLOAD_FILE_SIZE:
+                                click.echo(
+                                    "Could not reduce file size below limit"
+                                    f"at {quality} quality",
+                                    err=True
+                                )
+                                return -1
                         subject.add_location(media_file)
                     subject.metadata.update(metadata)
                     subject.save()
