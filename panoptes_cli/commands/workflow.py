@@ -260,7 +260,7 @@ def run_aggregation(workflow_id, user_id, delete_if_exists):
 @workflow.command()
 @click.argument('workflow-id', required=True, type=int)
 def get_batch_aggregation(workflow_id):
-    """Gets existing batch aggregations."""
+    """Gets workflow's existing batch aggregation."""
 
     agg = Workflow(workflow_id).get_batch_aggregation()
     click.echo(agg.raw)
