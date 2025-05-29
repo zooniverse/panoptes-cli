@@ -232,12 +232,21 @@ def delete(force, workflow_ids):
 
 @workflow.command()
 @click.argument('workflow-id', required=True, type=int)
-@click.argument('user-id', required=True, type=int)
+@click.option(
+    '--user-id',
+    '-u',
+    help=
+        'ID of user to whom notifications should be sent. '
+        'Default: logged in user',
+    required=False,
+    type=int
+)
 @click.option(
     '--delete-if-exists',
     '-d',
     is_flag=True,
-    help='Delete if it exists.')
+    help='Delete if it exists.'
+)
 def run_aggregation(workflow_id, user_id, delete_if_exists):
     """Kicks off a new aggregation job."""
 
@@ -250,19 +259,19 @@ def run_aggregation(workflow_id, user_id, delete_if_exists):
 
 @workflow.command()
 @click.argument('workflow-id', required=True, type=int)
-def get_batch_aggregations(workflow_id):
+def get_batch_aggregation(workflow_id):
     """Gets existing batch aggregations."""
 
-    agg = Workflow(workflow_id).get_batch_aggregations()
-    click.echo(agg.object_list)
+    agg = Workflow(workflow_id).get_batch_aggregation()
+    click.echo(agg.raw)
 
 
 @workflow.command()
 @click.argument('workflow-id', required=True, type=int)
-def check_batch_aggregation_run_status(workflow_id):
+def get_batch_aggregation_status(workflow_id):
     """Fetches the run status of existing aggregation."""
 
-    click.echo(Workflow(workflow_id).check_batch_aggregation_run_status())
+    click.echo(Workflow(workflow_id).get_batch_aggregation_status())
 
 
 @workflow.command()
