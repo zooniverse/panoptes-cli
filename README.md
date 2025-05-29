@@ -131,9 +131,9 @@ Options:
 ## Uploading non-image media types
 
 If you wish to upload subjects with non-image media (e.g. audio or video),
-you will need to make sure you have the `libmagic` library installed. If you
-don't already have `libmagic`, please see the [dependency information for
-python-magic](https://github.com/ahupp/python-magic#dependencies) for more
+it is desirable to have the `libmagic` library installed for type detection.
+If you don't already have `libmagic`, please see the [dependency information 
+for python-magic](https://github.com/ahupp/python-magic#installation) for more
 details.
 
 To check if `libmagic` is installed, run this command:
@@ -143,6 +143,11 @@ $ panoptes info
 ```
 
 If you see `libmagic: False` in the output then it isn't installed.
+
+If `libmagic` is not installed, assignment of MIME types (e.g., image/jpeg,
+video/mp4, text/plain, application/json, etc) will be based on file extensions.
+Be aware that if file names and extension aren't accurate, this could lead to
+issues when the media is loaded.
 
 ## Command Line Examples
 
