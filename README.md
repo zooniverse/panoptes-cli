@@ -236,13 +236,33 @@ $ panoptes project download --generate 2797 classifications.csv
 It is also possible to generate and download workflow classification or subject set classification exports
 ```
 $ panoptes workflow download-classifications --generate 18706 workflow-18706-classifications.csv
+
 $ panoptes subject-set download-classifications --generate 79758 subjectset-79759-classifications.csv
 ```
 
 ### Generate and download a talk comments export
 
 ```
-$ panoptes project download --generate --data-type talk_comments 2797 classifications.csv
+$ panoptes project download --generate --data-type talk_comments 2797 2797_comments.tar.gz
+```
+
+### List subject sets in a project
+
+```
+$ panoptes subject-set ls -p 2797
+```
+
+### Verify that subject set 4667 is in project 2797
+
+```
+$ panoptes subject-set ls -p 2797 4667
+```
+
+### Add known subjects to a subject set
+
+```
+# for known subjects with ids 3, 2, 1 and subject set with id 999
+$ panoptes subject-set add-subjects 999 3 2 1
 ```
 
 ### List workflows in your project
@@ -268,70 +288,49 @@ $ panoptes subject-set ls -w 1579
 
 ### Retire subjects in a workflow
 
+For known subjects with ids 2001 and 2002, workflow with id 101
 ```
-# for known subjects with ids 2001, 2001 and workflow with id 101
 $ panoptes workflow retire-subjects 101 2001 2002
 ```
 
 ### Un-Retire subjects in a workflow
 
+To unretire subjects according to subject ID, for known subjects with ids 2001, 2002 and workflow with id 101
 ```
-# for known subjects with ids 2001, 2001 and workflow with id 101
 $ panoptes workflow unretire-subjects 101 2001 2002
+```
+
+To unretire all subjects in a given subject set, for subject sets with ids 300, 301 and workflow with id 101
+```
+panoptes workflow unretire-subject-sets 101 300 301
 ```
 
 ### Run aggregations
 
+To run batch aggregation on workflow with id 101, notify logged-in user (default), and delete existing run
 ```
-# for running batch aggregation on workflow with id 101, user id 2001 and conditional delete flag -d
-$ panoptes workflow run-aggregation 101 2001 -d
+$ panoptes workflow run-aggregation 101 -d
 ```
 
 ### Get batch aggregations
 
+For fetching existing batch aggregation on workflow with id 101
 ```
-# for fetching existing batch aggregation on workflow with id 101
-$ panoptes workflow get-batch-aggregations 101
+$ panoptes workflow get-batch-aggregation 101
 ```
 
 ### Check batch aggregation run status
 
+For checking status of batch aggregation run on workflow with id 101
 ```
-# for checking existing batch aggregation status on workflow with id 101
-$ panoptes workflow check-batch-aggregation-run-status 101
+$ panoptes workflow get-batch-aggregation-status 101
 ```
 
 ### Get batch aggregation links
 
+For fetching download URLs for the run aggregation on workflow with id 101
 ```
-# for fetching links to the run aggregation on workflow with id 101
 $ panoptes workflow get-batch-aggregation-links 101
-```
-
-#### By subject sets, i.e. for all the linked subjects in a subject set
-
-```
-# for known subject sets with ids 300, 301 and workflow with id 101
-panoptes workflow unretire-subject-sets 101 300 301
-```
-
-### List subject sets in a project
-
-```
-$ panoptes subject-set ls -p 2797
-```
-
-### Verify that subject set 4667 is in project 2797
-
-```
-$ panoptes subject-set ls -p 2797 4667
-```
-
-### Add known subjects to a subject set
-
-```
-# for known subjects with ids 3, 2, 1 and subject set with id 999
-$ panoptes subject-set add-subjects 999 3 2 1
 ```
 
 ### Importing iNaturalist observations
