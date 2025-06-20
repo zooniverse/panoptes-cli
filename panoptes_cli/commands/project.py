@@ -190,7 +190,6 @@ def modify(project_id, display_name, description, primary_language, public):
         'classifications',
         'subjects',
         'workflows',
-        'workflow_contents',
         'talk_comments',
         'talk_tags']),
     default='classifications'
