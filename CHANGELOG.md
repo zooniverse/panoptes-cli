@@ -1,3 +1,6 @@
+## 1.2.1 (2025-06-24)
+- Fix: Update batch aggregation file paths
+
 ## 1.2.0 (2024-03-07)
 - Update: Replace pkg_resources with importlib.metadata
 - New: Add new package versions to info for debugging
